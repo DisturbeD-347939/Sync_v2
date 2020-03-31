@@ -1,0 +1,14 @@
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 6%; }
+  header #logo {
+    width: 30px;
+    height: 45px; }
+  header #signIn {
+    width: 30px;
+    height: 30px; }
+
+/*# sourceMappingURL=home.css.map */

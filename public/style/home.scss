@@ -1,0 +1,22 @@
+header
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 6%;
+
+    #logo
+    {
+        width: 30px;
+        height: 45px;
+    }
+    
+    #signIn
+    {
+        width: 30px;
+        height: 30px;
+    }
+}
+
