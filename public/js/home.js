@@ -30,3 +30,16 @@ $(document).ready(function()
 
 
 })
+
+function createRoom()
+{
+    console.log("Create room");
+    if(getCookie("email"))
+    {
+        console.log("Signed in!");
+    }
+    else
+    {
+        console.log("Not signed in!");
+    }
+}
