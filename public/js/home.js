@@ -208,10 +208,36 @@ $(document).ready(function()
             })
         }
     })
+    /****************************** FUNCTIONS *********************************/
+
+    function openSidebar()
+    {
+        if(!sidebarOpen)
         {
-          c = c.substring(1);
+            sidebarOpen = true;
+
+            $('.sidebar').animate
+            ({
+                width: sideNavWidth,
+                left: $(window).width() - sideNavWidth
+            });
+    
+            $('header, #content, footer').animate
+            ({
+                marginRight: sideNavWidth
+            });
+    
+            $('#loginButtons').animate
+            ({
+                opacity: 0
+            });
+
+            $('#logo').animate
+            ({
+                marginLeft: ($('#videoStreamingCard').position()).left - (sideNavWidth/2)
+            })
         }
-        if (c.indexOf(name) == 0) 
+    }
     function getCookie(cname) 
     {
         var name = cname + "=";
