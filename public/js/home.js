@@ -12,10 +12,27 @@ $(document).ready(function()
     //Hiding elements
     $('#formRegister').hide();
 
-    //Positioning
+    //Positioning/Sizing - Content
     $('#content').css("padding-bottom", $("footer").height() + 50);
 
-    /****************************** MAIN *********************************/
+    //Positioning/Sizing - Header
+    $('#logo').css("margin-left", ($('#videoStreamingCard').position()).left);
+
+    //console.log(($(window).width() + " | " + ($('#multipleDevicesCard').position()).left) + " | " + $('#multipleDevicesCard').width() + " | " + $('#loginButtons').width())
+    var loginButtonsPos = ($(window).width() - ($('#multipleDevicesCard').position()).left) - $('#multipleDevicesCard').width();
+    $('#loginButtons').css("margin-right",  loginButtonsPos);
+
+    //Positioning/Sizing - Sidebar
+    $('.sidebar').css("left", $(window).width());
+    $('#back').css
+    ({
+        width: $('#login').width(),
+        height: $('#login').height(),
+        top: ($('#login').position()).top,
+    })
+
+    $('#emailInput').focus();
+
     //Sticky header
     window.onscroll = function()
     {
