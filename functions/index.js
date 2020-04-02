@@ -31,5 +31,96 @@ app.get('/', (request, response) =>
     response.render('home');
 })
 
+app.post('/register', (request, response) =>
+{
+    var data = request.body.data;
+    var ID = 0;
+    var counter = 0;
+    var emailHash;
+    var IDList = [];
+    var uniqueID;
+
+    db.collection('Users').get()
+    .then(snapshot =>
+        {
+            snapshot.forEach(doc =>
+            {
+                //Add all unique IDs to an array
+                counter++;
+                IDList.push(doc.id);
+                if(counter == snapshot["_size"])
+                {
+                    //Loop through array
+                    for(var i = 0; i < IDList.length; i)
+                    {
+                        //Check if unique ID exists, if so add a new number to the ID
+                        if(IDList[i] == (data.username + "#" + ID))
+                        {
+                            i = 0;
+                            ID++;
+
+                            //If ID reaches maximum number of 9999, ask the user to rename it
+                            if(ID >= 10000)
+                            {
+                                response.send({code:"409", err:"Username taken"});
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            i++;
+                        }
+                        if(i+1 == IDList.length)
+                        {
+                            uniqueID = data.username + "#" + ID;
+                            bcrypt.compare(data.email, doc.data()["email"], function(err, res) 
+                            {
+                                if(!res)
+                                {
+                                    bcrypt.genSalt(10, function(err, salt)
+                                    {
+                                        bcrypt.hash(data["email"], salt, function(err, hash) 
+                                        {
+                                            console.log("Email Hash: " + hash);
+                                            emailHash = hash;
+                                            bcrypt.genSalt(10, function(err, salt)
+                                            {
+                                                bcrypt.hash(data["password"], salt, function(err, hash) 
+                                                {
+                                                    var fields =
+                                                    {
+                                                        username: data.username,
+                                                        id: ID,
+                                                        email: emailHash,
+                                                        password: hash
+                                                    }
+                                                    console.log(snapshot["_size"]);
+                                                    db.collection('Users').doc(uniqueID).set(fields).then(() =>
+                                                    {
+                                                        console.log("Account created");
+                                                        response.send({code: "200", err: ""});
+                                                    })
+                                                })
+                                            })
+                                        })
+                                    })
+                                }
+                                else
+                                {
+                                    response.send({code: "409", err: "email"});
+                                }
+                            })
+                        }
+                    }
+                }
+            })
+        })
+    .catch(err => 
+        {
+          console.log('Error getting documents', err);
+          response.send({code: "500", err: err});
+        });
+})
+
 //Export app
 exports.app = functions.https.onRequest(app);
