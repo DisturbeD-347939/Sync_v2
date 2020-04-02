@@ -146,6 +146,16 @@ $(document).ready(function()
             $(this).text("visibility");
         }
     })
+
+    $('#registerSubmit').click(function()
+    {
+        $('#formRegister > form').submit(); 
+    })
+
+    $('#loginSubmit').click(function()
+    {
+        $('#formLogin > form').submit();
+    })
         {
           c = c.substring(1);
         }
