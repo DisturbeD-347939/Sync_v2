@@ -33,6 +33,7 @@ $(document).ready(function()
 
     $('#emailInput').focus();
 
+    /****************************** EVENTS *********************************/
     //Sticky header
     window.onscroll = function()
     {
@@ -48,17 +49,32 @@ $(document).ready(function()
         }
     }
 
-
-})
-
-function createRoom()
-{
-    console.log("Create room");
-    if(getCookie("email"))
+    window.onresize = function()
     {
-        console.log("Signed in!");
+        //Positioning - Header
+        $('#logo').css("margin-left", ($('#videoStreamingCard').position()).left)
+
+        var loginButtonsPos = ($(window).width() - ($('#multipleDevicesCard').position()).left) - $('#multipleDevicesCard').width();
+        $('#loginButtons').css("margin-right",  loginButtonsPos);
+
+        //Positioning - Sidebar
+        if(sidebarOpen)
+        {
+            sideNavWidth = $(window).width() * 0.2;
+
+            $('.sidebar').css
+            ({
+                width: sideNavWidth,
+                left: $(window).width() - sideNavWidth
+            });
+
+            $('header, #content, footer').css("marginRight", sideNavWidth);
+        }
+        else
+        {
+            $('.sidebar').css("left", $(window).width());
+        }
     }
-    else
     {
         console.log("Not signed in!");
     }
