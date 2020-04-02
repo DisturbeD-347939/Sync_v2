@@ -10,7 +10,7 @@ $(document).ready(function()
     var sideNavWidth = $(window).width() * 0.2;
 
     //Hiding elements
-    $('#logout').hide();
+    $('#formRegister').hide();
 
     //Positioning
     $('#content').css("padding-bottom", $("footer").height() + 50);
