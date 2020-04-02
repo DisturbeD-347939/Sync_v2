@@ -1,4 +1,6 @@
-
+var sidebarOpen = false;
+var registerPasswordVisibility = false;
+var registerConfirmPasswordVisibility = false;
 
 $(document).ready(function()
 {
