@@ -7,6 +7,7 @@ $(document).ready(function()
     /***************************** SETUP *********************************/
     //Variables
     var stickyHeader = $("header").offset();
+    var sideNavWidth = $(window).width() * 0.2;
 
     //Hiding elements
     $('#logout').hide();
