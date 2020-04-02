@@ -88,9 +88,10 @@ $(document).ready(function()
         }
     })
 
+    $('#back').click(function()
     {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') 
+        closeSidebar();
+    })
         {
           c = c.substring(1);
         }
