@@ -11,6 +11,8 @@ body
     position: relative;
     min-height: 100%;
     min-height: 100vh;
+
+    font-family: 'Oswald', sans-serif;
 }
 
 header
@@ -23,13 +25,13 @@ header
     #logo
     {
         @include display(flex, row, space-evenly, center);
-        width: 10%;
+        width: 8%;
+        height: 100%;
         margin-left: 20px;
 
         #logoImg
         {
-            width: 30px;
-            height: 45px;
+            height: 80%;
         }
 
         p
@@ -51,6 +53,8 @@ header
     
         #logout
         {
+            display: none;
+
             width: 30px;
             height: 30px;
         }
@@ -79,7 +83,6 @@ header
         #createRoomCard
         {
             width: 30%;
-            height: 50%;
 
             margin-left: 20%;
         }
@@ -104,7 +107,7 @@ header
 
         div
         {
-            width: 500px;
+            width: 300px;
             
             div:first-child span
             {
@@ -129,6 +132,55 @@ footer
     }
 }
 
+.sidebar 
+{
+    @include display(flex, column, flex-start, center);
+    position: fixed;
+    z-index: 2;
+
+    height: 100%;
+    width: 0;
+    top: 0;
+    overflow-x: hidden;
+    padding-top: 60px;
+
+    background-color: #EDF0ED;
+    border-left: 1px solid black;
+
+    #back
+    {
+        position: absolute;
+
+        left: 5px;
+        width: 50px;
+        height: 50px;
+    }
+
+    #formLogin
+    {
+        @include display(flex, column, flex-start, center);
+        width: 100%;
+
+        form
+        {
+            @include display(flex,column, center, center);
+            margin-block-end: 0;
+        }
+    }
+
+    #formRegister
+    {
+        @include display(flex, column, flex-start, center);
+        width: 100%;
+
+        form
+        {
+            @include display(flex,column, center, center);
+            margin-block-end: 0;
+        }
+    }
+  }
+
 .sticky
 {
     position: fixed;
@@ -138,4 +190,21 @@ footer
     height: 6%;
 
     z-index: 1;
+}
+
+.disable-select
+{
+    user-select: none; // supported by Chrome and Opera
+   -webkit-user-select: none; // Safari 
+   -khtml-user-select: none; // Konqueror HTML 
+   -moz-user-select: none; // Firefox
+   -ms-user-select: none; // Internet Explorer/Edge
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active  
+{
+    -webkit-box-shadow: 0 0 0 30px #EDF0ED inset !important;
 }
