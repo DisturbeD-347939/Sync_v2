@@ -101,6 +101,15 @@ $(document).ready(function()
             $('#formRegister').fadeIn("slow");
         }, 300);
     })
+
+    $('#backRegister').click(function()
+    {
+        $('#formRegister').fadeOut("fast");
+        setTimeout(function()
+        {
+            $('#formLogin').fadeIn("slow");
+        }, 300);
+    })
         {
           c = c.substring(1);
         }
