@@ -110,6 +110,42 @@ $(document).ready(function()
             $('#formLogin').fadeIn("slow");
         }, 300);
     })
+
+    $('#registerPasswordVisibility').click(function()
+    {
+        if(registerPasswordVisibility)
+        {
+            registerPasswordVisibility = false;
+
+            $('#passwordRegisterInput').attr("type", "password");
+            $(this).text("visibility_off");
+        }
+        else
+        {
+            registerPasswordVisibility = true;
+
+            $('#passwordRegisterInput').attr("type", "text");
+            $(this).text("visibility");
+        }
+    })
+
+    $('#registerConfirmPasswordVisibility').click(function()
+    {
+        if(registerConfirmPasswordVisibility)
+        {
+            registerConfirmPasswordVisibility = false;
+
+            $('#confirmPasswordRegisterInput').attr("type", "password");
+            $(this).text("visibility_off");
+        }
+        else
+        {
+            registerConfirmPasswordVisibility = true;
+
+            $('#confirmPasswordRegisterInput').attr("type", "text");
+            $(this).text("visibility");
+        }
+    })
         {
           c = c.substring(1);
         }
