@@ -92,6 +92,15 @@ $(document).ready(function()
     {
         closeSidebar();
     })
+
+    $('#registerBtn').click(function()
+    {
+        $('#formLogin').fadeOut("fast");
+        setTimeout(function()
+        {
+            $('#formRegister').fadeIn("slow");
+        }, 300);
+    })
         {
           c = c.substring(1);
         }
