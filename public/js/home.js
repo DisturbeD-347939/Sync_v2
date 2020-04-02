@@ -238,6 +238,33 @@ $(document).ready(function()
             })
         }
     }
+
+    function closeSidebar()
+    {
+        sidebarOpen = false;
+
+        $('.sidebar').animate
+        ({
+            width: 0,
+            left: $(window).width()
+        })
+
+        $('header, #content, footer').animate
+        ({
+            marginRight: 0
+        });
+
+        $('#loginButtons').animate
+        ({
+            opacity: 1
+        });
+
+        $('#logo').animate
+        ({
+            marginLeft: ($('#videoStreamingCard').position()).left + (sideNavWidth/2)
+        })
+    }
+
     function getCookie(cname) 
     {
         var name = cname + "=";
