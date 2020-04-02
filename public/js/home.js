@@ -156,6 +156,58 @@ $(document).ready(function()
     {
         $('#formLogin > form').submit();
     })
+
+    /****************************** SUBMISSIONS *********************************/
+
+    $('#formRegister > form').submit(function(e)
+    {
+        e.preventDefault();
+
+        $('#registerSubmit').prop('disabled', true);
+
+        var valid = true;
+        var inputs = $('#formRegisterInputs :input');
+        var values = {};
+
+        inputs.each(function()
+        {
+            values[this.name] = $(this).val();
+            if(!$(this).hasClass("valid")) { valid = false; }
+        })
+
+        if(values["password"] != values["confirmPassword"])
+        {
+            valid = false;
+            $('#formRegisterInputs > div:nth-child(4) > span').attr("data-error", "Password doesn't match");
+            $('#formRegisterInputs > div:nth-child(4) > input').removeClass("valid");
+            $('#formRegisterInputs > div:nth-child(4) > input').addClass("invalid");
+            M.updateTextFields();
+        }
+
+        if(valid)
+        {
+            $.post('/register',
+            {
+                data: values
+            },
+            function(data, status)
+            {
+                console.log(data);
+                if(data.code == "200")
+                {
+                    console.log("Success");
+                }
+                if(data.code == "409")
+                {
+                    console.log("Email already in use!");
+                }
+                if(data.code == "500")
+                {
+                    alert("Sorry, we are having problems with our servers. Try again later");
+                }
+            })
+        }
+    })
         {
           c = c.substring(1);
         }
