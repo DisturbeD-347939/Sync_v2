@@ -75,10 +75,18 @@ $(document).ready(function()
             $('.sidebar').css("left", $(window).width());
         }
     }
+
+    $('#login, #createRoomBtn').click(function()
     {
-        console.log("Not signed in!");
-    }
-}
+        if(getCookie("email"))
+        {
+            console.log("Signed in!");
+        }
+        else
+        {
+            openSidebar();
+        }
+    })
 
 function getCookie(cname) 
 {
