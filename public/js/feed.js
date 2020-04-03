@@ -1,3 +1,10 @@
+//$(document).prop('title', 'Sync - ' + getCookie("username"));
+
+if(!getCookie("username"))
+{
+    window.location.href = "/";
+}
+
 function getCookie(cname) 
 {
     var name = cname + "=";
