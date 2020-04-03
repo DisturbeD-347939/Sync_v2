@@ -1,0 +1,35 @@
+html
+    head
+        script(async src="https://www.googletagmanager.com/gtag/js?id=G-RX5GB0SGG2")
+        script.
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-RX5GB0SGG2');
+        title Sync - Feed
+        meta(charset="utf-8")
+        meta(name="viewport" content="width=device=width, initial-scale=1.0")
+        link(rel="stylesheet" href="./style/materialize.css")
+        link(rel="stylesheet" href="./style/feed.css")
+        link(rel="icon" href="./img/logo.png" type="image")
+        link(href="https://fonts.googleapis.com/css2?family=Oswald:wght@300&display=swap" rel="stylesheet")
+        link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
+        script(src="./js/materialize.js")
+        script(src="./js/jquery.js")
+        script(src="./js/feed.js")
+    body
+        div#sidebar
+            div#logoTag
+                img(src="./img/logo.png")
+                div#tag
+                    img#profilePicture(src="")
+                    p#usernameDisplay
+            hr
+            div#createJoin
+                div.btn Create room
+                div.btn Join room
+            div#myRooms
+            div.btn Log out
+            
+
+                
