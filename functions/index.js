@@ -76,82 +76,218 @@ app.post('/register', (request, response) =>
     db.collection('Users').get()
     .then(snapshot =>
         {
-            snapshot.forEach(doc =>
+            if(snapshot["_size"] != 0)
             {
-                //Add all unique IDs to an array
-                counter++;
-                IDList.push(doc.id);
-                if(counter == snapshot["_size"])
+                snapshot.forEach(doc =>
                 {
-                    //Loop through array
-                    for(var i = 0; i < IDList.length; i)
-                    {
-                        //Check if unique ID exists, if so add a new number to the ID
-                        if(IDList[i] == (data.username + "#" + ID))
-                        {
-                            i = 0;
-                            ID++;
+                    //Add all unique IDs to an array
+                    counter++;
+                    IDList.push(doc.id);
 
-                            //If ID reaches maximum number of 9999, ask the user to rename it
-                            if(ID >= 10000)
-                            {
-                                response.send({code:"409", err:"Username taken"});
-                                break;
-                            }
-                        }
-                        else
+                    if(counter >= snapshot["_size"])
+                    {
+                        //Loop through array
+                        for(var i = 0; i < IDList.length; i)
                         {
-                            i++;
-                        }
-                        if(i+1 == IDList.length)
-                        {
-                            uniqueID = data.username + "#" + ID;
-                            bcrypt.compare(data.email, doc.data()["email"], function(err, res) 
+                            //Check if unique ID exists, if so add a new number to the ID
+                            if(IDList[i] == (data.username + "#" + ID))
                             {
-                                if(!res)
+                                i = 0;
+                                ID++;
+
+                                //If ID reaches maximum number of 9999, ask the user to rename it
+                                if(ID >= 10000)
                                 {
-                                    bcrypt.genSalt(10, function(err, salt)
+                                    response.send({code:"409", err:"username"});
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                i++;
+                            }
+                            if(i+1 >= IDList.length)
+                            {
+                                bcrypt.compare(data.email, doc.data()["email"], function(err, res) 
+                                {
+                                    if(!res)
                                     {
-                                        bcrypt.hash(data["email"], salt, function(err, hash) 
+                                        bcrypt.genSalt(10, function(err, salt)
                                         {
-                                            console.log("Email Hash: " + hash);
-                                            emailHash = hash;
-                                            bcrypt.genSalt(10, function(err, salt)
+                                            bcrypt.hash(data["email"], salt, function(err, hash) 
                                             {
-                                                bcrypt.hash(data["password"], salt, function(err, hash) 
+                                                emailHash = hash;
+                                                bcrypt.genSalt(10, function(err, salt)
                                                 {
-                                                    var fields =
+                                                    bcrypt.hash(data["password"], salt, function(err, hash) 
                                                     {
-                                                        username: data.username,
-                                                        id: ID,
-                                                        email: emailHash,
-                                                        password: hash
-                                                    }
-                                                    console.log(snapshot["_size"]);
-                                                    db.collection('Users').doc(uniqueID).set(fields).then(() =>
-                                                    {
-                                                        console.log("Account created");
-                                                        response.send({code: "200", err: ""});
+                                                        var nLength = ID.toString().length;
+
+                                                        switch(nLength)
+                                                        {
+                                                            case 1:
+                                                                uniqueID = data.username + "#000" + ID;
+                                                                break;
+
+                                                            case 2:
+                                                                uniqueID = data.username + "#00" + ID;
+                                                                break;
+
+                                                            case 3:
+                                                                uniqueID = data.username + "#0" + ID;
+                                                                break;
+
+                                                            default:
+                                                                uniqueID = data.username + "#" + ID;
+                                                        }
+
+                                                        console.log("Getting random words");
+
+                                                        fetch('https://random-word-api.herokuapp.com/word?number=2')
+                                                            .then(res => res.json())
+                                                            .then(json =>
+                                                            {
+                                                                var fields =
+                                                                {
+                                                                    username: data.username,
+                                                                    id: ID,
+                                                                    email: emailHash,
+                                                                    password: hash,
+                                                                    picture: json[0] + "@" + json[1]
+                                                                }
+                                                                db.collection('Users').doc(uniqueID).set(fields).then(() =>
+                                                                {
+                                                                    response.send({code: "200", id: uniqueID});
+                                                                })
+                                                            });
                                                     })
                                                 })
                                             })
                                         })
-                                    })
-                                }
-                                else
-                                {
-                                    response.send({code: "409", err: "email"});
-                                }
-                            })
+                                    }
+                                    else
+                                    {
+                                        response.send({code: "409", err: "email"});
+                                    }
+                                })
+                            }
                         }
                     }
-                }
-            })
+                })
+            }
+            else
+            {
+                bcrypt.genSalt(10, function(err, salt)
+                {
+                    bcrypt.hash(data["email"], salt, function(err, hash) 
+                    {
+                        emailHash = hash;
+                        bcrypt.genSalt(10, function(err, salt)
+                        {
+                            bcrypt.hash(data["password"], salt, function(err, hash) 
+                            {
+                                var nLength = ID.toString().length;
+                            
+                                switch(nLength)
+                                {
+                                    case 1:
+                                        uniqueID = data.username + "#000" + ID;
+                                        break;
+                                
+                                    case 2:
+                                        uniqueID = data.username + "#00" + ID;
+                                        break;
+                                
+                                    case 3:
+                                        uniqueID = data.username + "#0" + ID;
+                                        break;
+                                    
+                                    default:
+                                        uniqueID = data.username + "#" + ID;
+                                }
+                            
+                                fetch('https://random-word-api.herokuapp.com/word?number=2')
+                                    .then(res => res.json())
+                                    .then(json =>
+                                    {
+                                        var fields =
+                                        {
+                                            username: data.username,
+                                            id: ID,
+                                            email: emailHash,
+                                            password: hash,
+                                            picture: json[0] + "@" + json[1]
+                                        }
+                                        db.collection('Users').doc(uniqueID).set(fields).then(() =>
+                                        {
+                                            response.send({code: "200", id: uniqueID});
+                                        })
+                                    });
+                            })
+                        })
+                    })
+                })
+            }
         })
     .catch(err => 
         {
-          console.log('Error getting documents', err);
-          response.send({code: "500", err: err});
+            response.send({code: "500", err: err});
+        });
+})
+
+app.post('/login', (request, response) =>
+{
+    var data = request.body.data;
+    var counter = 0;
+
+    db.collection('Users').get()
+    .then(snapshot =>
+        {
+            if(snapshot["_size"] != 0)
+            {
+                snapshot.forEach(doc =>
+                    {
+                        bcrypt.compare(data.email, doc.data()["email"], function(err, res) 
+                        {
+                            if(res)
+                            {
+                                bcrypt.compare(data.password, doc.data()["password"], function(err, res) 
+                                {
+                                    if(res)
+                                    {
+                                        response.send({code: "200", id: doc.id});
+                                    }
+                                    else
+                                    {
+                                        counter++;
+        
+                                        if(counter == snapshot["_size"])
+                                        {
+                                            response.send({code: "409", err: ""});
+                                        }
+                                    }
+                                })
+                            }
+                            else
+                            {
+                                counter++;
+        
+                                if(counter == snapshot["_size"])
+                                {
+                                    response.send({code: "409", err: ""});
+                                }
+                            }
+                        })
+                    })
+            }
+            else
+            {
+                response.send({code: "409", err: ""});
+            }
+        })
+    .catch(err => 
+        {
+            response.send({code: "500", err: err});
         });
 })
 
