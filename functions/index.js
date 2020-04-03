@@ -4,6 +4,7 @@ const {Storage} = require('@google-cloud/storage');
 const express = require('express');
 const engines = require('consolidate');
 const bcrypt = require('bcryptjs');
+const fetch = require('node-fetch');
 const fs = require('fs');
 const serviceAccount = require('./ServiceAccountKey.json');
 
