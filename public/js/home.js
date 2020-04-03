@@ -153,6 +153,11 @@ $(document).ready(function()
         $('#formLogin > form').submit();
     })
 
+    $('#emailInput').focus(function()
+    {
+        $('#formLoginInputs > div:first-child > span').attr("data-error", "Not a valid email address");
+    })
+
     /****************************** SUBMISSIONS *********************************/
 
     $('#formRegister > form').submit(function(e)
