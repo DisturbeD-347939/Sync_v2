@@ -36,10 +36,30 @@ html
                 img#profilePicture(src="")
             hr
             div#createJoin
-                div.btn Create room
-                div.btn Join room
-            div#myRooms
-            div.btn Log out
+                div#createRoomBtn.waves-effect.waves-light.btn.black Create room
+                div#joinRoomBtn.waves-effect.waves-light.btn.black Join room
+            div#myRooms My Rooms
+            hr
+            a#logOut.waves-effect.waves-light.btn.red(href="#logout") Log out
+        div#content
+            div#initialScreen
+                h1 Create or join a new room to start
+            div#createRoom
+                h1 Create room
+                form#createRoomForm
+                    div.input-field
+                        input#roomNameInput.form-control.validate(name="roomName" type="text" maxlength="20" required)
+                        label(for="roomNameInput") Room Name
+                        span.helper-text(data-error="")
+                    div#privacyRoomSwitch.switch
+                        label Public
+                            input#privacyRoomInput(name="privacyEnable" type="checkbox")
+                            span.lever
+                            | Private
+                    div.input-field
+                        input#roomPasswordInput.form-control.validate(name="roomPassword" type="password" maxlength="128" required)
+                        label(for="roomPasswordInput") Password
+                div#createRoomSubmit.waves-effect.waves-light.btn.black(type="submit") Start the fun now!
             
 
                 
