@@ -158,7 +158,7 @@ $(document).ready(function()
         $('#formLoginInputs > div:first-child > span').attr("data-error", "Not a valid email address");
     })
 
-    /****************************** SUBMISSIONS *********************************/
+    /****************************** REQUESTS *********************************/
 
     $('#formRegister > form').submit(function(e)
     {
