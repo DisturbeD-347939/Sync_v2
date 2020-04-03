@@ -36,8 +36,6 @@ $(document).ready(function()
         top: ($('#login').position()).top,
     })
 
-    $('#emailInput').focus();
-
     /****************************** EVENTS *********************************/
     //Sticky header
     window.onscroll = function()
