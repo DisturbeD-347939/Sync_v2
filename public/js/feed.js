@@ -5,6 +5,24 @@ if(!getCookie("username"))
     window.location.href = "/";
 }
 
+$(document).ready(function()
+{
+    $('#usernameDisplay').text(getCookie("username"));
+    $('#logoDisplay > img').height($('#logoDisplay').height());
+
+    $.get('/userProfile',
+    {
+        id: getCookie("username")
+    },
+    function(data, status)
+    {
+        if(data.code == "200")
+        {
+            $('#profilePicture').attr('src', 'https://api.adorable.io/avatars/200/' + data.res + '.png');
+        }
+    })
+})
+
 function getCookie(cname) 
 {
     var name = cname + "=";
