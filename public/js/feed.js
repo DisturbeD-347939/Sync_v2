@@ -1,5 +1,3 @@
-//$(document).prop('title', 'Sync - ' + getCookie("username"));
-
 if(!getCookie("username"))
 {
     window.location.href = "/";
