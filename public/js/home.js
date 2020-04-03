@@ -164,7 +164,7 @@ $(document).ready(function()
     {
         e.preventDefault();
 
-        $('#registerSubmit').prop('disabled', true);
+        $('#registerSubmit').addClass("disabled");
 
         var valid = true;
         var inputs = $('#formRegisterInputs :input');
