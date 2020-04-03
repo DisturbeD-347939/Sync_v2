@@ -225,6 +225,52 @@ $(document).ready(function()
             })
         }
     })
+
+    $('#formLogin > form').submit(function(e)
+    {
+        e.preventDefault();
+
+        $('#loginSubmit').addClass("disabled");
+
+        var valid = true;
+        var inputs = $('#formLoginInputs :input');
+        var values = {};
+
+        inputs.each(function()
+        {
+            values[this.name] = $(this).val();
+            if(!$(this).hasClass("valid")) { valid = false; }
+        })
+
+        $.post('/login',
+        {
+            data: values
+        },
+        function(data, status)
+        {
+            $('#loginSubmit').removeClass("disabled");
+
+            if(data.code == "200")
+            {
+                console.log("Logged in");
+                setCookie("username", data.id, 1);
+                window.location.href = "/feed";
+            }
+            if(data.code == "409")
+            {
+                $('#formLoginInputs > div:first-child > span').attr("data-error", "Wrong email/password");
+                $('#formLoginInputs > div > input').val("");
+                $('#formLoginInputs > div > input').removeClass("valid");
+                $('#formLoginInputs > div > input').addClass("invalid");
+            }
+            if(data.code == "500")
+            {
+                alert("Sorry, we are having problems with our servers. Try again later");
+                closeSidebar();
+            }
+        })
+    })
+
     /****************************** FUNCTIONS *********************************/
 
     function openSidebar()
