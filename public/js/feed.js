@@ -5,8 +5,22 @@ if(!getCookie("username"))
 
 $(document).ready(function()
 {
+    /***************************** SETUP *********************************/
+    //positioning/Sizing - Logo - Tag
     $('#usernameDisplay').text(getCookie("username"));
-    $('#logoDisplay > img').height($('#logoDisplay').height());
+    $('#logo').height($('#logoDisplay').height());
+
+    //Positioning/Sizing - Log Out
+    var logOutTop = ($('#logOut').position()).top = $('#sidebar').height() - $('#logOut').height();
+    $('#logOut').css('top', logOutTop);
+    $('#logOut').css('width', $('#sidebar').width());
+
+    //Positioning/Sizing - Create room form
+    //$('#createRoomForm :nth-child(2)').css("margin-bottom", "20px");
+
+    //Hiding
+    $('#createRoomForm :nth-child(3)').hide();
+    //$('#createRoom').hide();
 
     $.get('/userProfile',
     {
