@@ -1,0 +1,43 @@
+@mixin display($display, $direction, $justify, $align)
+{
+    display: $display;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+#sidebar
+{
+    @include display(flex, column, flex-start, flex-start);
+
+    width: 20%;
+    height: 100%;
+
+    border-right: 1px solid black;
+
+    #logoTag
+    {
+        @include display(flex, row, center, center);
+
+        width: 100%;
+        height: 8%;
+
+        img
+        {
+            height: 80%;
+        }
+
+        #tag
+        {
+            @include display(flex, row, center, center);
+
+            #profilePicture
+            {
+                width: 20%;
+                border-radius: 50%;
+
+                margin-right: 10px;
+            }
+        }
+    }
+}

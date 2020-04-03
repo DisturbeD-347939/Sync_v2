@@ -36,25 +36,18 @@ header
 
         p
         {
-            font-size: 20px;
+            font-size: 26px;
+            font-weight: bold;
         }
     }
 
-    div:last-child
+    #loginBtn
     {
-        @include display(flex, row, space-evenly, center);
+        @include display(flex, row, flex-end, center);
         width: 10%;
 
         #login
         {
-            width: 30px;
-            height: 30px;
-        }
-    
-        #logout
-        {
-            display: none;
-
             width: 30px;
             height: 30px;
         }
@@ -85,6 +78,23 @@ header
             width: 30%;
 
             margin-left: 20%;
+
+            div
+            {
+                span
+                {
+                    font-weight: bold;
+                    font-size: 24px;
+                }
+                p
+                {
+                    font-size: 20px;
+                }
+                a
+                {
+                    font-size: 20px;
+                }
+            }
         }
     }
 
@@ -179,7 +189,12 @@ footer
             margin-block-end: 0;
         }
     }
-  }
+}
+
+btn, #login, #logout
+{
+    cursor: pointer;
+}
 
 .sticky
 {

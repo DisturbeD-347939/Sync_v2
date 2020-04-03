@@ -1,0 +1,28 @@
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 20%;
+  height: 100%;
+  border-right: 1px solid black; }
+  #sidebar #logoTag {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 8%; }
+    #sidebar #logoTag img {
+      height: 80%; }
+    #sidebar #logoTag #tag {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center; }
+      #sidebar #logoTag #tag #profilePicture {
+        width: 20%;
+        border-radius: 50%;
+        margin-right: 10px; }
+
+/*# sourceMappingURL=feed.css.map */
