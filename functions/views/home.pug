@@ -66,6 +66,7 @@ html
                     div.input-field
                         input#emailInput.form-control.validate(name="email" type="email" maxlength="100" required)
                         label(for="emailInput") Email Address
+                        span.helper-text(data-error="Not a valid email address")
                     div.input-field
                         input#passwordInput.form-control.validate(name="password" type="password" maxlength="128" required)
                         label(for="passwordInput") Password
