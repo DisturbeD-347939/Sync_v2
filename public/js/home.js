@@ -252,7 +252,7 @@ $(document).ready(function()
 
             if(data.code == "200")
             {
-                console.log("Logged in");
+                analytics.logEvent('log_in');
                 setCookie("username", data.id, 1);
                 window.location.href = "/feed";
             }
