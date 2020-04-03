@@ -6,38 +6,134 @@
     align-items: $align;
 }
 
+body
+{
+    font-family: 'Oswald', sans-serif;
+
+    //background-color: rgba(0,0,0, 0.5);
+    //filter: brightness(50%);
+
+    overflow-x: hidden;
+}
+
 #sidebar
 {
     @include display(flex, column, flex-start, flex-start);
+    position: fixed;
 
-    width: 20%;
+    width: 15%;
     height: 100%;
 
     border-right: 1px solid black;
 
     #logoTag
     {
-        @include display(flex, row, center, center);
+        @include display(flex, row, space-evenly, center);
 
         width: 100%;
         height: 8%;
 
         img
         {
+            margin-left: 20px;
             height: 80%;
+            width: 10%;
+            margin-right: 20px;
         }
 
-        #tag
+        #profilePicture
         {
-            @include display(flex, row, center, center);
+            width: 20%;
+            margin-right: 20px;
 
-            #profilePicture
+            border-radius: 50%;
+            border: 1px solid black;
+        }
+    }
+
+    hr
+    {
+        width: 90%;
+    }
+
+    #createJoin
+    {
+        @include display(flex, column, center, center);
+
+        width: 100%;
+
+        margin-bottom: 30px;
+
+        .btn
+        {
+            width: 90%;
+        }
+    }
+
+    #myRooms
+    {
+        @include display(flex, column, center, center);
+
+        width: 100%;
+
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    #logOut
+    {
+        position: absolute;
+
+        border-top: 1px solid black;
+    }
+}
+
+#content
+{
+    @include display(flex, row, center, center);
+
+    width: 85%;
+    height: 100%;
+    margin-left: 14%;
+
+    #createRoom
+    {   
+        display:  none;
+
+        width: 18%;
+        height: 50%;
+
+        #createRoomForm
+        {
+            @include display(flex, column, center, flex-start);
+    
+            div
             {
-                width: 20%;
-                border-radius: 50%;
+                width: 100%;
 
-                margin-right: 10px;
+                input
+                {
+                    width: 100%;
+                }
+            }
+
+            #privacyRoomSwitch
+            {
+                margin-bottom: 20px;
             }
         }
+
+        div:last-child
+        {
+            width: 0 auto;
+        }
+    }
+}
+
+@media screen and (max-width: 1380px) 
+{
+    #usernameDisplay
+    {
+        display: none;
     }
 }
