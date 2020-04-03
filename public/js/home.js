@@ -81,6 +81,7 @@ $(document).ready(function()
 
     $('#login, #createRoomBtn').click(function()
     {
+        openSidebar();
     })
 
     $('#back').click(function()
