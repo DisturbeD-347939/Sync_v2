@@ -22,6 +22,57 @@ $(document).ready(function()
     $('#createRoomForm :nth-child(3)').hide();
     //$('#createRoom').hide();
 
+    /****************************** EVENTS *********************************/
+
+    window.onresize = function()
+    {
+        //positioning/Sizing - Logo - Tag
+        $('#logo').height($('#logoDisplay').height());
+
+        //Positioning/Sizing - Log Out
+        var logOutTop = ($('#logOut').position()).top = $('#sidebar').height() - $('#logOut').height();
+        $('#logOut').css('top', logOutTop);
+        $('#logOut').css('width', $('#sidebar').width());
+    }
+
+    $('#logOut').click(function()
+    {
+        setCookie('username', "", -1);
+        window.location.href = '/';
+    })
+
+    $('#createRoomBtn').click(function()
+    {
+        $('#initialScreen').fadeOut("fast", function()
+        {
+            $('#createRoom').fadeIn("fast");
+        })
+    })
+
+    $('#createRoomSubmit').click(function()
+    {
+        $('#createRoomForm').submit();
+    })
+
+    $('#privacyRoomSwitch > label :checkbox').change(function()
+    {
+        if(this.checked)
+        {
+            console.log("show");
+            $('#createRoomForm :nth-child(3)').show();
+           //$('#createRoomForm :nth-child(2)').css("margin-bottom", "0px");
+        }
+        else
+        {
+            console.log("hide");
+            $('#createRoomForm :nth-child(3)').hide()
+            $('#createRoomForm :nth-child(3) > input').val("");
+            $('#createRoomForm :nth-child(3) > input').removeClass("invalid");
+            $('#createRoomForm :nth-child(3) > input').removeClass("valid");
+            //$('#createRoomForm :nth-child(2)').css("margin-bottom", "20px");
+        }
+    })
+
     $.get('/userProfile',
     {
         id: getCookie("username")
