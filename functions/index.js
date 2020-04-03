@@ -292,6 +292,33 @@ app.post('/login', (request, response) =>
         });
 })
 
+app.post('/createRoom', (request, response) =>
+{
+    var data = request.body.data;
+
+    console.log(data);
+
+    db.collection('Rooms').get()
+    .then(snapshot =>
+        {
+            bcrypt.genSalt(10, function(err, salt)
+            {
+                bcrypt.hash(data["roomPassword"], salt, function(err, hash) 
+                {
+                    data["roomPassword"] = hash;
+                    db.collection('Rooms').add(data).then(ref => 
+                    {
+                        response.send({code:"200", res: ref.id});
+                    });
+                });
+            });
+        })
+    .catch(err =>
+        {
+            response.send({code:"500", err: err});
+        })
+})
+
 async function uploadFile(path)
 {
     await storage.bucket("sync-7e5a0.appspot.com").upload(path, 
