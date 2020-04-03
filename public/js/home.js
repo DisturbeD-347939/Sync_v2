@@ -25,7 +25,7 @@ $(document).ready(function()
 
     //console.log(($(window).width() + " | " + ($('#multipleDevicesCard').position()).left) + " | " + $('#multipleDevicesCard').width() + " | " + $('#loginButtons').width())
     var loginButtonsPos = ($(window).width() - ($('#multipleDevicesCard').position()).left) - $('#multipleDevicesCard').width();
-    $('#loginButtons').css("margin-right",  loginButtonsPos);
+    $('#loginBtn').css("margin-right",  loginButtonsPos);
 
     //Positioning/Sizing - Sidebar
     $('.sidebar').css("left", $(window).width());
@@ -60,7 +60,7 @@ $(document).ready(function()
         $('#logo').css("margin-left", ($('#videoStreamingCard').position()).left)
 
         var loginButtonsPos = ($(window).width() - ($('#multipleDevicesCard').position()).left) - $('#multipleDevicesCard').width();
-        $('#loginButtons').css("margin-right",  loginButtonsPos);
+        $('#loginBtn').css("margin-right", loginButtonsPos);
 
         //Positioning - Sidebar
         if(sidebarOpen)
