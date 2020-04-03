@@ -43,6 +43,27 @@ app.get('/feed', (request, response) =>
     //Render page
     response.render('feed');
 })
+
+app.get('/userProfile', (request, response) =>
+{
+    var data = request.query.id;
+
+    console.log("Retrieving " + data + " info");
+
+    db.collection('Users').doc(data).get()
+    .then(doc =>
+        {
+            if(doc)
+            {
+                response.send({code: "200", res: doc.data()["picture"]});
+            }
+            else
+            {
+                response.send({code: "500", res: "Document not found"});
+            }
+        })
+})
+
 app.post('/register', (request, response) =>
 {
     var data = request.body.data;
