@@ -285,7 +285,7 @@ $(document).ready(function()
                 left: $(window).width() - sideNavWidth
             });
     
-            $('header, #content, footer').animate
+            $('header, #content').animate
             ({
                 marginRight: sideNavWidth
             });
@@ -299,12 +299,23 @@ $(document).ready(function()
             ({
                 marginLeft: ($('#videoStreamingCard').position()).left - (sideNavWidth/2)
             })
+
+            $('footer').animate
+            ({
+                right: sideNavWidth/2
+            })
+
         }
     }
 
     function closeSidebar()
     {
         sidebarOpen = false;
+
+        $('footer').animate
+        ({
+            right: 0
+        })
 
         $('.sidebar').animate
         ({
