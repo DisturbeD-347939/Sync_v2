@@ -290,7 +290,7 @@ $(document).ready(function()
                 marginRight: sideNavWidth
             });
     
-            $('#loginButtons').animate
+            $('#loginBtn').animate
             ({
                 opacity: 0
             });
@@ -328,7 +328,7 @@ $(document).ready(function()
             marginRight: 0
         });
 
-        $('#loginButtons').animate
+        $('#loginBtn').animate
         ({
             opacity: 1
         });
@@ -338,6 +338,7 @@ $(document).ready(function()
             marginLeft: ($('#videoStreamingCard').position()).left + (sideNavWidth/2)
         })
     }
+})
 
 function getCookie(cname) 
 {
