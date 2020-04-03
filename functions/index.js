@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const {Storage} = require('@google-cloud/storage');
 const express = require('express');
 const engines = require('consolidate');
 const bcrypt = require('bcryptjs');
@@ -10,6 +11,10 @@ admin.initializeApp
 ({
     credential: admin.credential.cert(serviceAccount)
 });
+
+const projectId = 'sync-7e5a0.appspot.com'
+const keyFilename = './ServiceAccountKey.json'
+const storage = new Storage({projectId, keyFilename});
 
 const db = admin.firestore();
 
@@ -121,6 +126,18 @@ app.post('/register', (request, response) =>
           response.send({code: "500", err: err});
         });
 })
+
+async function uploadFile(path)
+{
+    await storage.bucket("sync-7e5a0.appspot.com").upload(path, 
+    {
+        gzip: true,
+        metadata: 
+        {
+            cacheControl: 'public, max-age=31536000',
+        },
+    });
+}
 
 //Export app
 exports.app = functions.https.onRequest(app);
