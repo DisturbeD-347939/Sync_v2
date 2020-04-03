@@ -64,10 +64,10 @@ html
                 h3 Log In
                 form#formLoginInputs
                     div.input-field
-                        input#emailInput.form-control.validate(type="email" maxlength="100" required)
+                        input#emailInput.form-control.validate(name="email" type="email" maxlength="100" required)
                         label(for="emailInput") Email Address
                     div.input-field
-                        input#passwordInput.form-control.validate(type="password" maxlength="128" required)
+                        input#passwordInput.form-control.validate(name="password" type="password" maxlength="128" required)
                         label(for="passwordInput") Password
                     div#loginSubmit.waves-effect.waves-light.btn.black(type="submit") Login
                 p or
