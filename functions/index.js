@@ -36,6 +36,13 @@ app.get('/', (request, response) =>
     response.render('home');
 })
 
+app.get('/feed', (request, response) =>
+{
+    //Cache request for faster access
+    response.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+    //Render page
+    response.render('feed');
+})
 app.post('/register', (request, response) =>
 {
     var data = request.body.data;
