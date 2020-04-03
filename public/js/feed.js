@@ -73,6 +73,8 @@ $(document).ready(function()
         }
     })
 
+    /****************************** REQUESTS *********************************/
+
     $.get('/userProfile',
     {
         id: getCookie("username")
@@ -84,6 +86,43 @@ $(document).ready(function()
             $('#profilePicture').attr('src', 'https://api.adorable.io/avatars/200/' + data.res + '.png');
         }
     })
+
+    $('#createRoomForm').submit(function(e)
+    {
+        e.preventDefault();
+
+        var valid = true;
+        var inputs = $('#createRoomForm :input');
+        var values = {};
+
+        inputs.each(function()
+        {
+            if($(this).parent().css("display") != "none" && this.type != "checkbox")
+            {
+                console.log(this.name);
+                values[this.name] = $(this).val();
+                if(!$(this).hasClass("valid")) { valid = false; }
+            }
+
+            if(this.name == "privacyEnable" && !$(this).prop('checked'))
+            {
+                values["roomPassword"] = "";
+            }
+        })
+
+        if(valid)
+        {
+            $.post('/createRoom',
+            {
+                data: values,
+            },
+            function(data, status)
+            {
+                console.log(data);
+            })
+        }
+    })
+
 })
 
 function getCookie(cname) 
