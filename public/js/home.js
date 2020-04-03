@@ -2,6 +2,11 @@ var sidebarOpen = false;
 var registerPasswordVisibility = false;
 var registerConfirmPasswordVisibility = false;
 
+if(getCookie("username"))
+{
+    window.location.href="/feed";
+}
+
 $(document).ready(function()
 {
     /***************************** SETUP *********************************/
