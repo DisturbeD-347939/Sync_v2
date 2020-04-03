@@ -193,18 +193,34 @@ $(document).ready(function()
             },
             function(data, status)
             {
-                console.log(data);
+                $('#registerSubmit').removeClass("disabled");
+
                 if(data.code == "200")
                 {
-                    console.log("Success");
+                    $('#backRegister').click();
                 }
                 if(data.code == "409")
                 {
-                    console.log("Email already in use!");
+                    console.log(data.err);
+                    if(data.err == "email")
+                    {
+                        $('#formRegisterInputs > div:nth-child(2) > span').attr("data-error", "Email taken!");
+                        $('#formRegisterInputs > div:nth-child(2) > input').val("");
+                        $('#formRegisterInputs > div:nth-child(2) > input').removeClass("valid");
+                        $('#formRegisterInputs > div:nth-child(2) > input').addClass("invalid");
+                    }
+                    else if(data.err == "username")
+                    {
+                        $('#formRegisterInputs > div:nth-child(1) > span').attr("data-error", "Username taken!");
+                        $('#formRegisterInputs > div:nth-child(1) > input').val("");
+                        $('#formRegisterInputs > div:nth-child(1) > input').removeClass("valid");
+                        $('#formRegisterInputs > div:nth-child(1) > input').addClass("invalid");
+                    }
                 }
                 if(data.code == "500")
                 {
                     alert("Sorry, we are having problems with our servers. Try again later");
+                    closeSidebar();
                 }
             })
         }
