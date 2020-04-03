@@ -81,14 +81,6 @@ $(document).ready(function()
 
     $('#login, #createRoomBtn').click(function()
     {
-        if(getCookie("email"))
-        {
-            console.log("Signed in!");
-        }
-        else
-        {
-            openSidebar();
-        }
     })
 
     $('#back').click(function()
