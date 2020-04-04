@@ -149,6 +149,14 @@ $(document).ready(function()
 
 })
 
+function addRoom(name, id)
+{
+    var roomName = "<p class='roomName'>" + name + "</p>";
+    var viewersImg = "<i class='viewersImg material-icons small prefix disable-select'> visibility </i>";
+    var viewersCount = "<p class='viewersCount' > 1 </p> "
+
+    $('#myRooms').append("<div class='roomTag' onclick=joinRoom('" + id + "')><div>" + roomName + "<div>" + viewersImg + viewersCount + "</div></div></div><hr>");
+}
 function sidebarToggle()
 {
     if(sidebar)
