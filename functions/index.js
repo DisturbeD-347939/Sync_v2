@@ -65,6 +65,79 @@ app.get('/userProfile', (request, response) =>
         })
 })
 
+app.get('/getRooms', (request, response) =>
+{
+    var data = request.query.id;
+    var counterRooms = 0;
+    var roomsSize = 0;
+    var usersSize = 0;
+    var roomsJoined = 0;
+    var roomIDs = [];
+
+    console.log("HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+
+    db.collection('Rooms').get()
+    .then(snapshot =>
+    {
+        roomsSize = snapshot["_size"];
+        if(snapshot["_size"] > 0)
+        {
+            snapshot.forEach(doc =>
+            {
+                var roomID = doc.id;
+                var roomName = doc.data()["roomName"];
+
+                db.collection('Rooms').doc(doc.id).collection("Users").get()
+                .then(snapshot =>
+                {
+                    var counterUsers = 0;
+                    usersSize = snapshot["_size"];
+                    snapshot.forEach(doc =>
+                    {
+                        counterUsers++;
+                        console.log(doc.id == data);
+                        if(doc.id == data)
+                        {
+                            roomIDs[roomsJoined] =
+                            {
+                                id: roomID,
+                                name: roomName
+                            }
+                            roomsJoined++;
+                        }
+
+                        if(counterUsers >= usersSize)
+                        {
+                            counterRooms++;
+                        }
+
+                        console.log(counterRooms + " | " + roomsSize + " | " + counterUsers + " | " + usersSize)
+                        if(counterRooms >= roomsSize && counterUsers >= usersSize)
+                        {
+                            console.log("sent");
+                            response.send({code: "200", res: roomIDs});
+                        }
+                    })
+                })
+                .catch(err => 
+                {
+                    console.log(err);
+                    response.send({code: "500", err: err});
+                });
+            })
+        }
+        else
+        {
+            console.log("Sent 2");
+            response.send({code: "200", res: roomIDs})
+        }
+    })
+    .catch(err => 
+    {
+        response.send({code: "500", err: err});
+    });
+})
+
 /******************************************* POST ******************************************/
 
 app.post('/register', (request, response) =>
