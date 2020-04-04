@@ -81,6 +81,11 @@ $(document).ready(function()
         $('#createRoomForm').submit();
     })
 
+    $('#sidebarToggle').click(function()
+    {
+        sidebarToggle();
+    })
+
     $('#privacyRoomSwitch > label :checkbox').change(function()
     {
         if(this.checked)
