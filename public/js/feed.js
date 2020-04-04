@@ -86,6 +86,12 @@ $(document).ready(function()
         sidebarToggle();
     })
 
+    $(document).on('click','.roomTag',function()
+    {
+        joinRoom($(this).attr('name'));
+    })
+
+    //On change
     $('#privacyRoomSwitch > label :checkbox').change(function()
     {
         if(this.checked)
