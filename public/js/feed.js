@@ -38,7 +38,8 @@ $(document).ready(function()
 
     //Hiding
     $('#createRoomForm :nth-child(3)').hide();
-    //$('#createRoom').hide();
+    $('#createRoom').hide();
+    $('#sidebarToggle').hide();
 
     /****************************** EVENTS *********************************/
 
