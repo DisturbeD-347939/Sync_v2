@@ -22,7 +22,8 @@
     "firebase-functions": "^3.3.0",
     "handlebars": "^4.7.3",
     "node-fetch": "^2.6.0",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^5.12.0",
