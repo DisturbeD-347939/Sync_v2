@@ -39,6 +39,8 @@ body {
     margin-bottom: 30px; }
     #sidebar #createJoin .btn {
       width: 90%; }
+    #sidebar #createJoin div {
+      background-color: #35364a; }
   #sidebar #myRooms {
     display: flex;
     flex-direction: column;
@@ -47,8 +49,21 @@ body {
     width: 100%;
     font-weight: bold;
     font-size: 20px; }
+    #sidebar #myRooms .roomTag {
+      width: 90%; }
+      #sidebar #myRooms .roomTag div:first-child {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center; }
+        #sidebar #myRooms .roomTag div:first-child div {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center; }
   #sidebar #logOut {
     position: absolute;
+    background-color: #ef863d;
     border-top: 1px solid black; }
 
 #content {
@@ -59,23 +74,58 @@ body {
   width: 85%;
   height: 100%;
   margin-left: 14%; }
+  #content #sidebarToggle {
+    position: fixed;
+    top: 10px;
+    left: 10px; }
   #content #createRoom {
-    display: none;
-    width: 18%;
-    height: 50%; }
-    #content #createRoom #createRoomForm {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-image: url(../img/createRoomImg.png);
+    background-size: contain;
+    padding: 10px;
+    width: 20%;
+    border-radius: 5%; }
+    #content #createRoom #createRoomContent {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: flex-start; }
-      #content #createRoom #createRoomForm div {
-        width: 100%; }
-        #content #createRoom #createRoomForm div input {
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      border-radius: 5%;
+      padding: 10px;
+      background-color: white; }
+      #content #createRoom #createRoomContent h2 {
+        margin-top: 0px; }
+      #content #createRoom #createRoomContent #createRoomForm {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start; }
+        #content #createRoom #createRoomContent #createRoomForm div {
           width: 100%; }
-      #content #createRoom #createRoomForm #privacyRoomSwitch {
-        margin-bottom: 20px; }
-    #content #createRoom div:last-child {
-      width: 0 auto; }
+          #content #createRoom #createRoomContent #createRoomForm div z
+          input {
+            width: 100%; }
+        #content #createRoom #createRoomContent #createRoomForm #privacyRoomSwitch {
+          margin-bottom: 20px; }
+          #content #createRoom #createRoomContent #createRoomForm #privacyRoomSwitch .lever {
+            background-color: #35364a; }
+          #content #createRoom #createRoomContent #createRoomForm #privacyRoomSwitch .level:after {
+            background-color: #ef863d; }
+        #content #createRoom #createRoomContent #createRoomForm label {
+          font-size: 18px; }
+      #content #createRoom #createRoomContent #createRoomSubmit {
+        background-color: #35364a;
+        margin-bottom: 5px; }
+  #content #room {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; }
 
 @media screen and (max-width: 1380px) {
   #usernameDisplay {
