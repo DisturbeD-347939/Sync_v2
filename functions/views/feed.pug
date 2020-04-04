@@ -35,22 +35,27 @@ html
             //button(onclick='openSidebar()') Show
             div#initialScreen
                 h1 Create or join a new room to start
-            div#createRoom
-                h1 Create room
-                form#createRoomForm
-                    div.input-field
-                        input#roomNameInput.form-control.validate(name="roomName" type="text" maxlength="20" required)
-                        label(for="roomNameInput") Room Name
-                        span.helper-text(data-error="")
-                    div#privacyRoomSwitch.switch
-                        label Public
-                            input#privacyRoomInput(name="privacyEnable" type="checkbox")
-                            span.lever
-                            | Private
-                    div.input-field
-                        input#roomPasswordInput.form-control.validate(name="roomPassword" type="password" maxlength="128" required)
-                        label(for="roomPasswordInput") Password
-                div#createRoomSubmit.waves-effect.waves-light.btn.black(type="submit") Start the fun now!
+            div#createRoom.z-depth-5
+                div#createRoomContent
+                    h2 Create room
+                    form#createRoomForm
+                        div.input-field
+                            input#roomNameInput.form-control.validate(name="roomName" type="text" maxlength="20" required)
+                            label(for="roomNameInput") Room Name
+                            span.helper-text(data-error="")
+                        div#privacyRoomSwitch.switch
+                            label Public
+                                input#privacyRoomInput(name="privacyEnable" type="checkbox")
+                                span.lever
+                                | Private
+                        div.input-field
+                            input#roomPasswordInput.form-control.validate(name="roomPassword" type="password" maxlength="128" required)
+                            label(for="roomPasswordInput") Password
+                    div#createRoomSubmit.waves-effect.waves-light.btn(type="submit") Start the fun now 🥳
+            div#room
+                div#playerChat
+                    div#player
+                    div#chat
             
 
                 
