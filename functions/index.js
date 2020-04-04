@@ -2,24 +2,23 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const {Storage} = require('@google-cloud/storage');
 const express = require('express');
+const app = express();
 const engines = require('consolidate');
 const bcrypt = require('bcryptjs');
 const fetch = require('node-fetch');
 const fs = require('fs');
 const serviceAccount = require('./ServiceAccountKey.json');
+const projectId = 'sync-7e5a0.appspot.com'
+const keyFilename = './ServiceAccountKey.json'
+const storage = new Storage({projectId, keyFilename});
 
 admin.initializeApp
 ({
     credential: admin.credential.cert(serviceAccount)
 });
 
-const projectId = 'sync-7e5a0.appspot.com'
-const keyFilename = './ServiceAccountKey.json'
-const storage = new Storage({projectId, keyFilename});
-
 const db = admin.firestore();
 
-const app = express();
 
 //Set engine as pug
 app.engine('pug', engines.pug);
