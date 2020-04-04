@@ -37,7 +37,7 @@ $(document).ready(function()
     //Positioning/Sizing - Header
     $('#logo').css("margin-left", ($('#videoStreamingCard').position()).left);
 
-    //console.log(($(window).width() + " | " + ($('#multipleDevicesCard').position()).left) + " | " + $('#multipleDevicesCard').width() + " | " + $('#loginButtons').width())
+    //console.log(($(window).width() + " | " + ($('#multipleDevicesCard').position()).left) + " | " + $('#multipleDevicesCard').width() + " | " + $('#loginBtn').width())
     var loginButtonsPos = ($(window).width() - ($('#multipleDevicesCard').position()).left) - $('#multipleDevicesCard').width();
     $('#loginBtn').css("margin-right",  loginButtonsPos);
 

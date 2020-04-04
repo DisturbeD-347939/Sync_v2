@@ -8,7 +8,6 @@ if(!getCookie("username"))
 $(document).ready(function()
 {
     /***************************** SETUP *********************************/
-    //positioning/Sizing - Logo - Tag
     //Variables - Firebase : Database
     var firebaseConfig = 
     {
@@ -26,6 +25,8 @@ $(document).ready(function()
 
     //Variables - Sidebar
     var sidebar = true;
+
+    //Positioning/Sizing - Logo : Tag
     $('#usernameDisplay').text(getCookie("username"));
     $('#logo').height($('#logoDisplay').height());
 
@@ -50,7 +51,7 @@ $(document).ready(function()
 
     window.onresize = function()
     {
-        //positioning/Sizing - Logo - Tag
+        //Positioning/Sizing - Logo : Tag
         $('#logo').height($('#logoDisplay').height());
 
         //Positioning/Sizing - Log Out
@@ -82,13 +83,11 @@ $(document).ready(function()
     {
         if(this.checked)
         {
-            console.log("show");
             $('#createRoomForm :nth-child(3)').show();
            //$('#createRoomForm :nth-child(2)').css("margin-bottom", "0px");
         }
         else
         {
-            console.log("hide");
             $('#createRoomForm :nth-child(3)').hide()
             $('#createRoomForm :nth-child(3) > input').val("");
             $('#createRoomForm :nth-child(3) > input').removeClass("invalid");
@@ -157,6 +156,8 @@ $(document).ready(function()
         }
     })
 
+    /****************************** FUNCTIONS *********************************/
+
 })
 
 function addRoom(name, id)
@@ -167,6 +168,12 @@ function addRoom(name, id)
 
     $('#myRooms').append("<div class='roomTag' onclick=joinRoom('" + id + "')><div>" + roomName + "<div>" + viewersImg + viewersCount + "</div></div></div><hr>");
 }
+
+function joinRoom(id)
+{
+    console.log("Joining " + id);
+}
+
 function sidebarToggle()
 {
     if(sidebar)

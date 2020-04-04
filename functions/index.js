@@ -28,6 +28,8 @@ app.set('views', './views');
 //Use new engine
 app.set('view engine', 'pug');
 
+/******************************************* GET ******************************************/
+
 //Homepage
 app.get('/', (request, response) =>
 {
@@ -64,6 +66,8 @@ app.get('/userProfile', (request, response) =>
             }
         })
 })
+
+/******************************************* POST ******************************************/
 
 app.post('/register', (request, response) =>
 {
@@ -167,7 +171,7 @@ app.post('/register', (request, response) =>
                                         })
                                     }
                                     else
-                                    {
+                                    {   
                                         response.send({code: "409", err: "email"});
                                     }
                                 })
@@ -318,6 +322,8 @@ app.post('/createRoom', (request, response) =>
             response.send({code:"500", err: err});
         })
 })
+
+/***************************************** SOCKETS ***************************************/
 
 async function uploadFile(path)
 {
