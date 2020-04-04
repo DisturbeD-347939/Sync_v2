@@ -30,7 +30,11 @@ $(document).ready(function()
     $('#logOut').css('width', $('#sidebar').width());
 
     //Positioning/Sizing - Create room form
-    //$('#createRoomForm :nth-child(2)').css("margin-bottom", "20px");
+    $('#createRoomImg').width($('#createRoom').width() + 20);
+    $('#createRoomImg').height($('#createRoom').height() + 20);
+    var createRoomImgTop = $('#createRoom').position().top;
+    var createRoomImgLeft = $('#createRoom').position().left;
+    $('#createRoomImg').css({'top': createRoomImgTop, 'left': createRoomImgLeft});
 
     //Hiding
     $('#createRoomForm :nth-child(3)').hide();
