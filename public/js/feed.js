@@ -100,6 +100,21 @@ $(document).ready(function()
 
     /****************************** REQUESTS *********************************/
 
+    $.get('/getRooms',
+    {
+        id: id
+    },
+    function(data, status)
+    {
+        if(data.code == "200")
+        {
+            data.res.forEach(room =>
+            {
+                addRoom(room.name, room.id);
+            })
+        }
+    })
+
     $.get('/userProfile',
     {
         id: id
