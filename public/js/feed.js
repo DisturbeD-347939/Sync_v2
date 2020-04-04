@@ -1,3 +1,5 @@
+var id = getCookie('username');
+
 if(!getCookie("username"))
 {
     window.location.href = "/";
@@ -99,7 +101,7 @@ $(document).ready(function()
 
     $.get('/userProfile',
     {
-        id: getCookie("username")
+        id: id
     },
     function(data, status)
     {
