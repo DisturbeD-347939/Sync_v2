@@ -297,23 +297,48 @@ app.post('/login', (request, response) =>
 app.post('/createRoom', (request, response) =>
 {
     var data = request.body.data;
+    var id = request.body.id;
 
     console.log(data);
 
     db.collection('Rooms').get()
     .then(snapshot =>
         {
-            bcrypt.genSalt(10, function(err, salt)
+            if(data["roomPassword"] != "")
             {
-                bcrypt.hash(data["roomPassword"], salt, function(err, hash) 
+                console.log("Password")
+                bcrypt.genSalt(10, function(err, salt)
                 {
-                    data["roomPassword"] = hash;
-                    db.collection('Rooms').add(data).then(ref => 
+                    bcrypt.hash(data["roomPassword"], salt, function(err, hash) 
                     {
-                        response.send({code:"200", res: ref.id});
+                        data["roomPassword"] = hash;
+                        db.collection('Rooms').add(data).then(doc => 
+                        {
+                            console.log("Room ID - " + doc.id);
+                            db.collection('Rooms').doc(doc.id).collection("Users").add({id: id})
+                            .then(doc =>
+                                {
+                                    console.log(doc.id)
+                                    response.send({code:"200", res: doc.id});
+                                })
+                        });
                     });
                 });
-            });
+            }
+            else
+            {
+                console.log("No password");
+                db.collection('Rooms').add(data).then(doc => 
+                {
+                    console.log("Room ID - " + doc.id);
+                    db.collection('Rooms').doc(doc.id).collection("Users").add({id: id})
+                        .then(doc =>
+                        {
+                            console.log(doc.id);
+                            response.send({code:"200", res: doc.id});
+                        })
+                });
+            }
         })
     .catch(err =>
         {
