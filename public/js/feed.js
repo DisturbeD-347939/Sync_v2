@@ -149,6 +149,56 @@ $(document).ready(function()
 
 })
 
+function sidebarToggle()
+{
+    if(sidebar)
+    {
+        closeSidebar();
+    }
+    else
+    {
+        openSidebar();
+    }
+}
+
+function closeSidebar()
+{
+    $('#sidebar').animate
+    ({
+        left: "-" + $('#sidebar').width(),
+    }, 600, function()
+    {
+        $('#sidebar').hide();
+        $('#sidebarToggle').fadeIn("fast");
+    });
+
+    $('#content').animate
+    ({
+        width: "100%",
+        marginLeft: "0%"
+    }, 600);
+
+    sidebar = false;
+}
+
+function openSidebar()
+{
+    $('#sidebarToggle').fadeOut("fast");
+    $('#sidebar').show();
+    $('#sidebar').animate
+    ({
+        left: 0
+    }, 600);
+
+    $('#content').animate
+    ({
+        width: "85%",
+        marginLeft: "14%"
+    }, 600);
+
+    sidebar = true;
+}
+
 function getCookie(cname) 
 {
     var name = cname + "=";
