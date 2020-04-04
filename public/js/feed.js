@@ -21,6 +21,9 @@ $(document).ready(function()
     };
     firebase.initializeApp(firebaseConfig);
     var db = firebase.database();
+
+    //Variables - Sidebar
+    var sidebar = true;
     $('#usernameDisplay').text(getCookie("username"));
     $('#logo').height($('#logoDisplay').height());
 
