@@ -1,22 +1,10 @@
 html
     head
-        script(src="https://www.gstatic.com/firebasejs/7.13.2/firebase-app.js")
-        script(src="https://www.gstatic.com/firebasejs/7.13.2/firebase-analytics.js")
-        script.
-            var firebaseConfig = 
-            {
-                apiKey: "AIzaSyBxckf9wrJVmLSI4kMGnDjZmCPqpyE-8Pk",
-                authDomain: "sync-7e5a0.firebaseapp.com",
-                databaseURL: "https://sync-7e5a0.firebaseio.com",
-                projectId: "sync-7e5a0",
-                storageBucket: "sync-7e5a0.appspot.com",
-                messagingSenderId: "799635030891",
-                appId: "1:799635030891:web:d7a9b39c19e178258b422e",
-                measurementId: "G-58PCG0EDDL"
-            };
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            var analytics = firebase.analytics();
+        script(src="/__/firebase/7.13.2/firebase-app.js")
+        script(src="/__/firebase/7.13.2/firebase-analytics.js")
+        script(src="/__/firebase/7.13.2/firebase-firestore.js")
+        script(src="/__/firebase/7.13.2/firebase-auth.js")
+        script(src="/__/firebase/7.13.2/firebase-database.js")
         title Sync - Homepage
         meta(charset="utf-8")
         meta(name="viewport" content="width=device=width, initial-scale=1.0")

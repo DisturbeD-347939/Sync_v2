@@ -7,6 +7,20 @@ $(document).ready(function()
 {
     /***************************** SETUP *********************************/
     //positioning/Sizing - Logo - Tag
+    //Variables - Firebase : Database
+    var firebaseConfig = 
+    {
+        apiKey: "AIzaSyBxckf9wrJVmLSI4kMGnDjZmCPqpyE-8Pk",
+        authDomain: "sync-7e5a0.firebaseapp.com",
+        databaseURL: "https://sync-7e5a0.firebaseio.com",
+        projectId: "sync-7e5a0",
+        storageBucket: "sync-7e5a0.appspot.com",
+        messagingSenderId: "799635030891",
+        appId: "1:799635030891:web:d7a9b39c19e178258b422e",
+        measurementId: "G-58PCG0EDDL"
+    };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
     $('#usernameDisplay').text(getCookie("username"));
     $('#logo').height($('#logoDisplay').height());
 
