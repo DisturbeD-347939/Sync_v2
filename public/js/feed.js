@@ -49,6 +49,7 @@ $(document).ready(function()
 
     /****************************** EVENTS *********************************/
 
+    //Window events
     window.onresize = function()
     {
         //Positioning/Sizing - Logo : Tag
@@ -60,6 +61,7 @@ $(document).ready(function()
         $('#logOut').css('width', $('#sidebar').width());
     }
 
+    //Clicks
     $('#logOut').click(function()
     {
         setCookie('username', "", -1);
