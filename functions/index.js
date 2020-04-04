@@ -363,15 +363,13 @@ app.post('/createRoom', (request, response) =>
 {
     var data = request.body.data;
     var id = request.body.id;
-
-    console.log(data);
+    var roomID;
 
     db.collection('Rooms').get()
     .then(snapshot =>
         {
             if(data["roomPassword"] != "")
             {
-                console.log("Password")
                 bcrypt.genSalt(10, function(err, salt)
                 {
                     bcrypt.hash(data["roomPassword"], salt, function(err, hash) 
@@ -379,12 +377,11 @@ app.post('/createRoom', (request, response) =>
                         data["roomPassword"] = hash;
                         db.collection('Rooms').add(data).then(doc => 
                         {
-                            console.log("Room ID - " + doc.id);
-                            db.collection('Rooms').doc(doc.id).collection("Users").add({id: id})
+                            roomID = doc.id;
+                            db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({test: "test"})
                             .then(doc =>
                                 {
-                                    console.log(doc.id)
-                                    response.send({code:"200", res: doc.id});
+                                    response.send({code:"200", res: roomID});
                                 })
                         });
                     });
@@ -392,16 +389,14 @@ app.post('/createRoom', (request, response) =>
             }
             else
             {
-                console.log("No password");
                 db.collection('Rooms').add(data).then(doc => 
                 {
-                    console.log("Room ID - " + doc.id);
-                    db.collection('Rooms').doc(doc.id).collection("Users").add({id: id})
-                        .then(doc =>
-                        {
-                            console.log(doc.id);
-                            response.send({code:"200", res: doc.id});
-                        })
+                    roomID = doc.id;
+                    db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({test: "test"})
+                    .then(doc =>
+                    {
+                        response.send({code:"200", res: roomID});
+                    })
                 });
             }
         })
