@@ -158,73 +158,75 @@ $(document).ready(function()
         }
     })
 
-    /****************************** FUNCTIONS *********************************/
+    /****************************** FUNCTIONS **********************************/
 
+    function addRoom(name, id)
+    {
+        var roomName = "<p class='roomName'>" + name + "</p>";
+        var viewersImg = "<i class='viewersImg material-icons small prefix disable-select'> visibility </i>";
+        var viewersCount = "<p class='viewersCount' > 1 </p> "
+
+        $('#myRooms').append("<div class='roomTag' name=" + id + "><div>" + roomName + "<div>" + viewersImg + viewersCount + "</div></div></div><hr>");
+    }
+
+    function joinRoom(id)
+    {
+        console.log("Joining " + id);
+        $('#initialScreen').hide();
+        $('#createRoom').hide();
+        $('#room').show();
+    }
+
+    function sidebarToggle()
+    {
+        if(sidebar)
+        {
+            closeSidebar();
+        }
+        else
+        {
+            openSidebar();
+        }
+    }
+
+    function closeSidebar()
+    {
+        $('#sidebar').animate
+        ({
+            left: "-" + $('#sidebar').width(),
+        }, 600, function()
+        {
+            $('#sidebar').hide();
+            $('#sidebarToggle').fadeIn("fast");
+        });
+
+        $('#content').animate
+        ({
+            width: "100%",
+            marginLeft: "0%"
+        }, 600);
+
+        sidebar = false;
+    }
+
+    function openSidebar()
+    {
+        $('#sidebarToggle').fadeOut("fast");
+        $('#sidebar').show();
+        $('#sidebar').animate
+        ({
+            left: 0
+        }, 600);
+
+        $('#content').animate
+        ({
+            width: "85%",
+            marginLeft: "14%"
+        }, 600);
+
+        sidebar = true;
+    }
 })
-
-function addRoom(name, id)
-{
-    var roomName = "<p class='roomName'>" + name + "</p>";
-    var viewersImg = "<i class='viewersImg material-icons small prefix disable-select'> visibility </i>";
-    var viewersCount = "<p class='viewersCount' > 1 </p> "
-
-    $('#myRooms').append("<div class='roomTag' onclick=joinRoom('" + id + "')><div>" + roomName + "<div>" + viewersImg + viewersCount + "</div></div></div><hr>");
-}
-
-function joinRoom(id)
-{
-    console.log("Joining " + id);
-}
-
-function sidebarToggle()
-{
-    if(sidebar)
-    {
-        closeSidebar();
-    }
-    else
-    {
-        openSidebar();
-    }
-}
-
-function closeSidebar()
-{
-    $('#sidebar').animate
-    ({
-        left: "-" + $('#sidebar').width(),
-    }, 600, function()
-    {
-        $('#sidebar').hide();
-        $('#sidebarToggle').fadeIn("fast");
-    });
-
-    $('#content').animate
-    ({
-        width: "100%",
-        marginLeft: "0%"
-    }, 600);
-
-    sidebar = false;
-}
-
-function openSidebar()
-{
-    $('#sidebarToggle').fadeOut("fast");
-    $('#sidebar').show();
-    $('#sidebar').animate
-    ({
-        left: 0
-    }, 600);
-
-    $('#content').animate
-    ({
-        width: "85%",
-        marginLeft: "14%"
-    }, 600);
-
-    sidebar = true;
-}
 
 function getCookie(cname) 
 {
