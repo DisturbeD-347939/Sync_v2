@@ -78,160 +78,152 @@ app.post('/register', (request, response) =>
 
     db.collection('Users').get()
     .then(snapshot =>
+    {
+        if(snapshot["_size"] != 0)
         {
-            if(snapshot["_size"] != 0)
+            snapshot.forEach(doc =>
             {
-                snapshot.forEach(doc =>
+                //Add all unique IDs to an array
+                counter++;
+                IDList.push(doc.id);
+                if(counter >= snapshot["_size"])
                 {
-                    //Add all unique IDs to an array
-                    counter++;
-                    IDList.push(doc.id);
-
-                    if(counter >= snapshot["_size"])
+                    //Loop through array
+                    for(var i = 0; i < IDList.length; i)
                     {
-                        //Loop through array
-                        for(var i = 0; i < IDList.length; i)
+                        //Check if unique ID exists, if so add a new number to the ID
+                        if(IDList[i] == (data.username + "#" + ID))
                         {
-                            //Check if unique ID exists, if so add a new number to the ID
-                            if(IDList[i] == (data.username + "#" + ID))
+                            i = 0;
+                            ID++;
+                            //If ID reaches maximum number of 9999, ask the user to rename it
+                            if(ID >= 10000)
                             {
-                                i = 0;
-                                ID++;
-
-                                //If ID reaches maximum number of 9999, ask the user to rename it
-                                if(ID >= 10000)
-                                {
-                                    response.send({code:"409", err:"username"});
-                                    break;
-                                }
+                                response.send({code:"409", err:"username"});
+                                break;
                             }
-                            else
+                        }
+                        else
+                        {
+                            i++;
+                        }
+                        if(i+1 >= IDList.length)
+                        {
+                            bcrypt.compare(data.email, doc.data()["email"], function(err, res) 
                             {
-                                i++;
-                            }
-                            if(i+1 >= IDList.length)
-                            {
-                                bcrypt.compare(data.email, doc.data()["email"], function(err, res) 
+                                if(!res)
                                 {
-                                    if(!res)
+                                    bcrypt.genSalt(10, function(err, salt)
                                     {
-                                        bcrypt.genSalt(10, function(err, salt)
+                                        bcrypt.hash(data["email"], salt, function(err, hash) 
                                         {
-                                            bcrypt.hash(data["email"], salt, function(err, hash) 
+                                            emailHash = hash;
+                                            bcrypt.genSalt(10, function(err, salt)
                                             {
-                                                emailHash = hash;
-                                                bcrypt.genSalt(10, function(err, salt)
+                                                bcrypt.hash(data["password"], salt, function(err, hash) 
                                                 {
-                                                    bcrypt.hash(data["password"], salt, function(err, hash) 
+                                                    var nLength = ID.toString().length;
+                                                    switch(nLength)
                                                     {
-                                                        var nLength = ID.toString().length;
-
-                                                        switch(nLength)
+                                                        case 1:
+                                                            uniqueID = data.username + "#000" + ID;
+                                                            break;
+                                                        case 2:
+                                                            uniqueID = data.username + "#00" + ID;
+                                                            break;
+                                                        case 3:
+                                                            uniqueID = data.username + "#0" + ID;
+                                                            break;
+                                                        default:
+                                                            uniqueID = data.username + "#" + ID;
+                                                    }
+                                                    console.log("Getting random words");
+                                                    fetch('https://random-word-api.herokuapp.com/word?number=2')
+                                                    .then(res => res.json())
+                                                    .then(json =>
+                                                    {
+                                                        var fields =
                                                         {
-                                                            case 1:
-                                                                uniqueID = data.username + "#000" + ID;
-                                                                break;
-
-                                                            case 2:
-                                                                uniqueID = data.username + "#00" + ID;
-                                                                break;
-
-                                                            case 3:
-                                                                uniqueID = data.username + "#0" + ID;
-                                                                break;
-
-                                                            default:
-                                                                uniqueID = data.username + "#" + ID;
+                                                            username: data.username,
+                                                            id: ID,
+                                                            email: emailHash,
+                                                            password: hash,
+                                                            picture: json[0] + "@" + json[1]
                                                         }
-
-                                                        console.log("Getting random words");
-
-                                                        fetch('https://random-word-api.herokuapp.com/word?number=2')
-                                                            .then(res => res.json())
-                                                            .then(json =>
-                                                            {
-                                                                var fields =
-                                                                {
-                                                                    username: data.username,
-                                                                    id: ID,
-                                                                    email: emailHash,
-                                                                    password: hash,
-                                                                    picture: json[0] + "@" + json[1]
-                                                                }
-                                                                db.collection('Users').doc(uniqueID).set(fields).then(() =>
-                                                                {
-                                                                    response.send({code: "200", id: uniqueID});
-                                                                })
-                                                            });
-                                                    })
+                                                        db.collection('Users').doc(uniqueID).set(fields).then(() =>
+                                                        {
+                                                            response.send({code: "200", id: uniqueID});
+                                                        })
+                                                    });
                                                 })
                                             })
                                         })
-                                    }
-                                    else
-                                    {   
-                                        response.send({code: "409", err: "email"});
-                                    }
-                                })
-                            }
+                                    })
+                                }
+                                else
+                                {   
+                                    response.send({code: "409", err: "email"});
+                                }
+                            })
                         }
                     }
-                })
-            }
-            else
+                }
+            })
+        }
+        else
+        {
+            bcrypt.genSalt(10, function(err, salt)
             {
-                bcrypt.genSalt(10, function(err, salt)
+                bcrypt.hash(data["email"], salt, function(err, hash) 
                 {
-                    bcrypt.hash(data["email"], salt, function(err, hash) 
+                    emailHash = hash;
+                    bcrypt.genSalt(10, function(err, salt)
                     {
-                        emailHash = hash;
-                        bcrypt.genSalt(10, function(err, salt)
+                        bcrypt.hash(data["password"], salt, function(err, hash) 
                         {
-                            bcrypt.hash(data["password"], salt, function(err, hash) 
+                            var nLength = ID.toString().length;
+                        
+                            switch(nLength)
                             {
-                                var nLength = ID.toString().length;
+                                case 1:
+                                    uniqueID = data.username + "#000" + ID;
+                                    break;
                             
-                                switch(nLength)
+                                case 2:
+                                    uniqueID = data.username + "#00" + ID;
+                                    break;
+                            
+                                case 3:
+                                    uniqueID = data.username + "#0" + ID;
+                                    break;
+                                
+                                default:
+                                    uniqueID = data.username + "#" + ID;
+                            }
+                        
+                            fetch('https://random-word-api.herokuapp.com/word?number=2')
+                                .then(res => res.json())
+                                .then(json =>
                                 {
-                                    case 1:
-                                        uniqueID = data.username + "#000" + ID;
-                                        break;
-                                
-                                    case 2:
-                                        uniqueID = data.username + "#00" + ID;
-                                        break;
-                                
-                                    case 3:
-                                        uniqueID = data.username + "#0" + ID;
-                                        break;
-                                    
-                                    default:
-                                        uniqueID = data.username + "#" + ID;
-                                }
-                            
-                                fetch('https://random-word-api.herokuapp.com/word?number=2')
-                                    .then(res => res.json())
-                                    .then(json =>
+                                    var fields =
                                     {
-                                        var fields =
-                                        {
-                                            username: data.username,
-                                            id: ID,
-                                            email: emailHash,
-                                            password: hash,
-                                            picture: json[0] + "@" + json[1]
-                                        }
-                                        db.collection('Users').doc(uniqueID).set(fields).then(() =>
-                                        {
-                                            response.send({code: "200", id: uniqueID});
-                                        })
-                                    });
-                            })
+                                        username: data.username,
+                                        id: ID,
+                                        email: emailHash,
+                                        password: hash,
+                                        picture: json[0] + "@" + json[1]
+                                    }
+                                    db.collection('Users').doc(uniqueID).set(fields).then(() =>
+                                    {
+                                        response.send({code: "200", id: uniqueID});
+                                    })
+                                });
                         })
                     })
                 })
-            }
-        })
+            })
+        }
+    })
     .catch(err => 
         {
             response.send({code: "500", err: err});
