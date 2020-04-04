@@ -23,7 +23,7 @@ $(document).ready(function()
         measurementId: "G-58PCG0EDDL"
     };
     firebase.initializeApp(firebaseConfig);
-    
+
     //Variables
     var stickyHeader = $("header").offset();
     var sideNavWidth = $(window).width() * 0.2;
@@ -266,7 +266,7 @@ $(document).ready(function()
 
             if(data.code == "200")
             {
-                analytics.logEvent('log_in');
+                firebase.analytics().logEvent('log_in');
                 setCookie("username", data.id, 1);
                 window.location.href = "/feed";
             }
