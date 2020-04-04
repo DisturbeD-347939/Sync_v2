@@ -115,6 +115,8 @@ $(document).ready(function()
     {
         e.preventDefault();
 
+        $('createRoomSubmit').prop('disabled', true);
+
         var valid = true;
         var inputs = $('#createRoomForm :input');
         var values = {};
@@ -123,7 +125,6 @@ $(document).ready(function()
         {
             if($(this).parent().css("display") != "none" && this.type != "checkbox")
             {
-                console.log(this.name);
                 values[this.name] = $(this).val();
                 if(!$(this).hasClass("valid")) { valid = false; }
             }
@@ -136,13 +137,22 @@ $(document).ready(function()
 
         if(valid)
         {
+            values["owner"] = id;
+
             $.post('/createRoom',
             {
                 data: values,
+                id: id
             },
             function(data, status)
             {
-                console.log(data);
+                if(data.code == "200")
+                {
+                    db.ref('Chats/' + data.res + "/1/").set({name: "Server", message: "Welcome"});
+                    addRoom(values["roomName"], data.res);
+                    closeSidebar();
+                    joinRoom(data.res);
+                }
             })
         }
     })
