@@ -203,6 +203,15 @@ body
     #room
     {
         @include display(flex, column, center, center);
+
+        p
+        {
+            border: 1px solid black;
+        }
+        div
+        {
+            border: 1px solid black;
+        }
     }
 }
 
