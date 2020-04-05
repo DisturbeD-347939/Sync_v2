@@ -5,7 +5,7 @@ html
         script(src="/__/firebase/7.13.2/firebase-firestore.js")
         script(src="/__/firebase/7.13.2/firebase-auth.js")
         script(src="/__/firebase/7.13.2/firebase-database.js")
-        title Sync - Homepage
+        title Sync - Home
         meta(charset="utf-8")
         meta(name="viewport" content="width=device=width, initial-scale=1.0")
         link(rel="stylesheet" href="./style/materialize.css")
@@ -18,82 +18,56 @@ html
         script(src="./js/jquery.js")
         script(src="./js/home.js")
     body
-        header
-            div#logo
-                img#logoImg(src="./img/logo.png")
-                p Sync
-            div#loginBtn
-                img#login(src="./img/icons/login.png")
-        div#content
-            div#banner
-                div#createRoomCard.card.white
-                    div.card-content.black-text
-                        span.card-title Welcome to Sync
-                        p Looking to watch some videos together with friends? This is the right place for you!.
-                    div.card-action
-                        a#createRoomBtn Get started
-            div
-                h2 What We Do
-                div#whatWeDo
-                    div#videoStreamingCard.card
-                        div.card-image
-                            img(src="./img/icons/synchronization.png")
-                            span.card-title.black-text Synchronization
-                        div.card-content.black-text
-                            p We make it possible for you and your friends to watch videos in real time where anyone can control the video.
-                    div#multipleRoomsCard.card
-                        div.card-image
-                            img(src="./img/icons/multipleRooms.png")
-                            span.card-title.black-text Multiple Rooms
-                        div.card-content
-                            p Join a room to start streaming with your friends. Wan't to keep the family/friends group separate? Create 2 rooms! Sync allows multiple rooms to be active.
-                    div#multipleDevicesCard.card
-                        div.card-image
-                            img(src="./img/icons/crossDevices.png")
-                            span.card-title.black-text Cross Devices
-                        div.card-content
-                            p We make it possible for you and your friends to watch videos in real time where anyone can control the video.
-        footer
+        div#sidebar
+            div#logoTag
+                img#logo(src="./img/logo.png")
+                p#usernameDisplay
+                img#profilePicture(src="")
             hr
-            p Contact me on ricardojg1@hotmail.com
-        div.sidebar.disable-select
-            img#back(src="./img/icons/close.png")
-            div#formLogin
-                h3 Log In
-                form#formLoginInputs
-                    div.input-field
-                        input#emailInput.form-control.validate(name="email" type="email" maxlength="100" required)
-                        label(for="emailInput") Email Address
-                        span.helper-text(data-error="Not a valid email address")
-                    div.input-field
-                        input#passwordInput.form-control.validate(name="password" type="password" maxlength="128" required)
-                        label(for="passwordInput") Password
-                    div#loginSubmit.waves-effect.waves-light.btn.black(type="submit") Login
-                p or
-                div#registerBtn.waves-effect.waves-light.btn.black Register
-            div#formRegister
-                h3 Register
-                form#formRegisterInputs
-                    div.input-field
-                        i.material-icons.small.prefix.disable-select account_circle
-                        input#usernameRegisterInput.form-control.validate(name="username" type="text" minlength="4" maxlength="25" required)
-                        label(for="usernameRegisterInput") Username
-                        span.helper-text(data-error="Minimum 4 characters")
-                    div.input-field
-                        i.material-icons.small.prefix.disable-select alternate_email
-                        input#emailRegisterInput.form-control.validate(name="email" type="email" minlength="6" maxlength="100" required)
-                        label(for="emailRegisterInput") Email Address
-                        span.helper-text(data-error="Enter a valid email address")
-                    div.input-field
-                        i#registerPasswordVisibility.material-icons.small.prefix.disable-select visibility_off
-                        input#passwordRegisterInput.form-control.validate(name="password" type="password" minlength="8" maxlength="128" required)
-                        label(for="passwordRegisterInput") Password
-                        span.helper-text(data-error="Minimum 8 characters")
-                    div.input-field
-                        i#registerConfirmPasswordVisibility.material-icons.small.prefix.disable-select visibility_off
-                        input#confirmPasswordRegisterInput.form-control.validate(name="confirmPassword" type="password" minlength="8" maxlength="128" required)
-                        label(for="confirmPasswordRegisterInput") Confirm Password
-                        span.helper-text(data-error="Minimum 8 characters")
-                    div#registerSubmit.waves-effect.waves-light.btn.black(type="submit") Register
-                p or
-                div#backRegister.waves-effect.waves-light.btn.black Back
+            div#createJoin
+                div#createRoomBtn.waves-effect.waves-light.btn Create room
+                div#joinRoomBtn.waves-effect.waves-light.btn Join room
+            div#myRooms My Rooms
+                hr
+            a#logOut.waves-effect.waves-light.btn(href="#logout") Log out
+        div#content
+            //button(onclick='closeSidebar()') Collapse
+            //button(onclick='openSidebar()') Show
+            i#sidebarToggle.material-icons.medium.prefix menu
+            div#initialScreen
+                h1 Create or join a new room to start
+            div#createRoom.z-depth-5
+                div#createRoomContent
+                    h2 Create room
+                    form#createRoomForm
+                        div.input-field
+                            input#roomNameInput.form-control.validate(name="roomName" type="text" maxlength="20" required)
+                            label(for="roomNameInput") Room Name
+                            span.helper-text(data-error="")
+                        div#privacyRoomSwitch.switch
+                            label Public
+                                input#privacyRoomInput(name="privacyEnable" type="checkbox")
+                                span.lever
+                                | Private
+                        div.input-field
+                            input#roomPasswordInput.form-control.validate(name="roomPassword" type="password" maxlength="128" required)
+                            label(for="roomPasswordInput") Password
+                    div#createRoomSubmit.waves-effect.waves-light.btn(type="submit") Start the fun now 🥳
+            div#room
+                h1 WORK IN PROGRESS
+                p#roomName
+                div#playerChat
+                    div#player
+                    div#chat
+                
+
+
+        //div#quit.modal
+        //    div.modal-content
+        //        h4 Are you sure you want to log out?
+        //    div.modal-footer
+        //        a.modal-close.waves-effect.waves-green.btn-flat(onclick(logout())) Yes
+        
+            
+
+                

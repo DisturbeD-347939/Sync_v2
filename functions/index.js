@@ -34,15 +34,15 @@ app.get('/', (request, response) =>
     //Cache request for faster access
     response.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     //Render page
-    response.render('home');
+    response.render('homepage');
 })
 
-app.get('/feed', (request, response) =>
+app.get('/home', (request, response) =>
 {
     //Cache request for faster access
     response.set('Cache-Control', 'public, max-age=300, s-maxage=600');
     //Render page
-    response.render('feed');
+    response.render('home');
 })
 
 app.get('/userProfile', (request, response) =>

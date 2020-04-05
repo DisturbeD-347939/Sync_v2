@@ -1,10 +1,8 @@
-var sidebarOpen = false;
-var registerPasswordVisibility = false;
-var registerConfirmPasswordVisibility = false;
+var id = getCookie('username');
 
-if(getCookie("username"))
+if(!getCookie("username"))
 {
-    window.location.href="/feed";
+    window.location.href = "/";
 }
 
 $(document).ready(function()
@@ -23,334 +21,237 @@ $(document).ready(function()
         measurementId: "G-58PCG0EDDL"
     };
     firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
 
-    //Variables
-    var stickyHeader = $("header").offset();
-    var sideNavWidth = $(window).width() * 0.2;
+    //Variables - Sidebar
+    var sidebar = true;
 
-    //Hiding elements
-    $('#formRegister').hide();
+    //Positioning/Sizing - Logo : Tag
+    $('#usernameDisplay').text(getCookie("username"));
+    $('#logo').height($('#logoDisplay').height());
 
-    //Positioning/Sizing - Content
-    $('#content').css("padding-bottom", $("footer").height() + 50);
+    //Positioning/Sizing - Log Out
+    var logOutTop = ($('#logOut').position()).top = $('#sidebar').height() - $('#logOut').height();
+    $('#logOut').css('top', logOutTop);
+    $('#logOut').css('width', $('#sidebar').width());
 
-    //Positioning/Sizing - Header
-    $('#logo').css("margin-left", ($('#videoStreamingCard').position()).left);
+    //Positioning/Sizing - Create room form
+    $('#createRoomImg').width($('#createRoom').width() + 20);
+    $('#createRoomImg').height($('#createRoom').height() + 20);
+    var createRoomImgTop = $('#createRoom').position().top;
+    var createRoomImgLeft = $('#createRoom').position().left;
+    $('#createRoomImg').css({'top': createRoomImgTop, 'left': createRoomImgLeft});
 
-    //console.log(($(window).width() + " | " + ($('#multipleDevicesCard').position()).left) + " | " + $('#multipleDevicesCard').width() + " | " + $('#loginBtn').width())
-    var loginButtonsPos = ($(window).width() - ($('#multipleDevicesCard').position()).left) - $('#multipleDevicesCard').width();
-    $('#loginBtn').css("margin-right",  loginButtonsPos);
-
-    //Positioning/Sizing - Sidebar
-    $('.sidebar').css("left", $(window).width());
-    $('#back').css
-    ({
-        width: $('#login').width(),
-        height: $('#login').height(),
-        top: ($('#login').position()).top,
-    })
+    //Hiding
+    $('#createRoomForm :nth-child(3)').hide();
+    $('#createRoom').hide();
+    $('#sidebarToggle').hide();
+    $('#room').hide();
 
     /****************************** EVENTS *********************************/
-    //Sticky header
-    window.onscroll = function()
-    {
-        if(window.pageYOffset > stickyHeader.top)
-        {
-            $('header').addClass("sticky");
-            $('#content').css("padding-top", $('header').height());
-        }
-        else
-        {
-            $('header').removeClass("sticky");
-            $('#content').css("padding-top","0px");
-        }
-    }
 
+    //Window events
     window.onresize = function()
     {
-        //Positioning - Header
-        $('#logo').css("margin-left", ($('#videoStreamingCard').position()).left)
+        //Positioning/Sizing - Logo : Tag
+        $('#logo').height($('#logoDisplay').height());
 
-        var loginButtonsPos = ($(window).width() - ($('#multipleDevicesCard').position()).left) - $('#multipleDevicesCard').width();
-        $('#loginBtn').css("margin-right", loginButtonsPos);
-
-        //Positioning - Sidebar
-        if(sidebarOpen)
-        {
-            sideNavWidth = $(window).width() * 0.2;
-
-            $('.sidebar').css
-            ({
-                width: sideNavWidth,
-                left: $(window).width() - sideNavWidth
-            });
-
-            $('header, #content, footer').css("marginRight", sideNavWidth);
-        }
-        else
-        {
-            $('.sidebar').css("left", $(window).width());
-        }
+        //Positioning/Sizing - Log Out
+        var logOutTop = ($('#logOut').position()).top = $('#sidebar').height() - $('#logOut').height();
+        $('#logOut').css('top', logOutTop);
+        $('#logOut').css('width', $('#sidebar').width());
     }
 
-    $('#login, #createRoomBtn').click(function()
+    //Clicks
+    $('#logOut').click(function()
     {
-        openSidebar();
+        setCookie('username', "", -1);
+        window.location.href = '/';
     })
 
-    $('#back').click(function()
+    $('#createRoomBtn').click(function()
     {
-        closeSidebar();
-    })
-
-    $('#registerBtn').click(function()
-    {
-        $('#formLogin').fadeOut("fast");
-        setTimeout(function()
+        $('#initialScreen').fadeOut("fast", function()
         {
-            $('#formRegister').fadeIn("slow");
-        }, 300);
+            $('#createRoom').fadeIn("fast");
+        })
     })
 
-    $('#backRegister').click(function()
+    $('#createRoomSubmit').click(function()
     {
-        $('#formRegister').fadeOut("fast");
-        setTimeout(function()
-        {
-            $('#formLogin').fadeIn("slow");
-        }, 300);
+        $('#createRoomForm').submit();
     })
 
-    $('#registerPasswordVisibility').click(function()
+    $('#sidebarToggle').click(function()
     {
-        if(registerPasswordVisibility)
-        {
-            registerPasswordVisibility = false;
+        sidebarToggle();
+    })
 
-            $('#passwordRegisterInput').attr("type", "password");
-            $(this).text("visibility_off");
+    $(document).on('click','.roomTag',function()
+    {
+        joinRoom($(this).attr('name'));
+    })
+
+    //On change
+    $('#privacyRoomSwitch > label :checkbox').change(function()
+    {
+        if(this.checked)
+        {
+            $('#createRoomForm :nth-child(3)').show();
+           //$('#createRoomForm :nth-child(2)').css("margin-bottom", "0px");
         }
         else
         {
-            registerPasswordVisibility = true;
-
-            $('#passwordRegisterInput').attr("type", "text");
-            $(this).text("visibility");
+            $('#createRoomForm :nth-child(3)').hide()
+            $('#createRoomForm :nth-child(3) > input').val("");
+            $('#createRoomForm :nth-child(3) > input').removeClass("invalid");
+            $('#createRoomForm :nth-child(3) > input').removeClass("valid");
+            //$('#createRoomForm :nth-child(2)').css("margin-bottom", "20px");
         }
-    })
-
-    $('#registerConfirmPasswordVisibility').click(function()
-    {
-        if(registerConfirmPasswordVisibility)
-        {
-            registerConfirmPasswordVisibility = false;
-
-            $('#confirmPasswordRegisterInput').attr("type", "password");
-            $(this).text("visibility_off");
-        }
-        else
-        {
-            registerConfirmPasswordVisibility = true;
-
-            $('#confirmPasswordRegisterInput').attr("type", "text");
-            $(this).text("visibility");
-        }
-    })
-
-    $('#registerSubmit').click(function()
-    {
-        $('#formRegister > form').submit(); 
-    })
-
-    $('#loginSubmit').click(function()
-    {
-        $('#formLogin > form').submit();
-    })
-
-    $('#emailInput').focus(function()
-    {
-        $('#formLoginInputs > div:first-child > span').attr("data-error", "Not a valid email address");
     })
 
     /****************************** REQUESTS *********************************/
 
-    $('#formRegister > form').submit(function(e)
+    $.get('/getRooms',
+    {
+        id: id
+    },
+    function(data, status)
+    {
+        if(data.code == "200")
+        {
+            data.res.forEach(room =>
+            {
+                addRoom(room.name, room.id);
+            })
+        }
+    })
+
+    $.get('/userProfile',
+    {
+        id: id
+    },
+    function(data, status)
+    {
+        if(data.code == "200")
+        {
+            $('#profilePicture').attr('src', 'https://api.adorable.io/avatars/200/' + data.res + '.png');
+        }
+    })
+
+    $('#createRoomForm').submit(function(e)
     {
         e.preventDefault();
 
-        $('#registerSubmit').addClass("disabled");
+        $('createRoomSubmit').prop('disabled', true);
 
         var valid = true;
-        var inputs = $('#formRegisterInputs :input');
+        var inputs = $('#createRoomForm :input');
         var values = {};
 
         inputs.each(function()
         {
-            values[this.name] = $(this).val();
-            if(!$(this).hasClass("valid")) { valid = false; }
-        })
+            if($(this).parent().css("display") != "none" && this.type != "checkbox")
+            {
+                values[this.name] = $(this).val();
+                if(!$(this).hasClass("valid")) { valid = false; }
+            }
 
-        if(values["password"] != values["confirmPassword"])
-        {
-            valid = false;
-            $('#formRegisterInputs > div:nth-child(4) > span').attr("data-error", "Password doesn't match");
-            $('#formRegisterInputs > div:nth-child(4) > input').removeClass("valid");
-            $('#formRegisterInputs > div:nth-child(4) > input').addClass("invalid");
-            M.updateTextFields();
-        }
+            if(this.name == "privacyEnable" && !$(this).prop('checked'))
+            {
+                values["roomPassword"] = "";
+            }
+        })
 
         if(valid)
         {
-            $.post('/register',
+            values["owner"] = id;
+
+            $.post('/createRoom',
             {
-                data: values
+                data: values,
+                id: id
             },
             function(data, status)
             {
-                $('#registerSubmit').removeClass("disabled");
-
                 if(data.code == "200")
                 {
-                    $('#backRegister').click();
-                }
-                if(data.code == "409")
-                {
-                    console.log(data.err);
-                    if(data.err == "email")
-                    {
-                        $('#formRegisterInputs > div:nth-child(2) > span').attr("data-error", "Email taken!");
-                        $('#formRegisterInputs > div:nth-child(2) > input').val("");
-                        $('#formRegisterInputs > div:nth-child(2) > input').removeClass("valid");
-                        $('#formRegisterInputs > div:nth-child(2) > input').addClass("invalid");
-                    }
-                    else if(data.err == "username")
-                    {
-                        $('#formRegisterInputs > div:nth-child(1) > span').attr("data-error", "Username taken!");
-                        $('#formRegisterInputs > div:nth-child(1) > input').val("");
-                        $('#formRegisterInputs > div:nth-child(1) > input').removeClass("valid");
-                        $('#formRegisterInputs > div:nth-child(1) > input').addClass("invalid");
-                    }
-                }
-                if(data.code == "500")
-                {
-                    alert("Sorry, we are having problems with our servers. Try again later");
+                    db.ref('Chats/' + data.res + "/1/").set({name: "Server", message: "Welcome"});
+                    addRoom(values["roomName"], data.res);
                     closeSidebar();
+                    joinRoom(data.res);
                 }
             })
         }
     })
 
-    $('#formLogin > form').submit(function(e)
+    /****************************** FUNCTIONS **********************************/
+
+    function addRoom(name, id)
     {
-        e.preventDefault();
+        var roomName = "<p class='roomName'>" + name + "</p>";
+        var viewersImg = "<i class='viewersImg material-icons small prefix disable-select'> visibility </i>";
+        var viewersCount = "<p class='viewersCount' > 1 </p> "
 
-        $('#loginSubmit').addClass("disabled");
+        $('#myRooms').append("<div class='roomTag' name=" + id + "><div>" + roomName + "<div>" + viewersImg + viewersCount + "</div></div></div><hr>");
+    }
 
-        var valid = true;
-        var inputs = $('#formLoginInputs :input');
-        var values = {};
-
-        inputs.each(function()
-        {
-            values[this.name] = $(this).val();
-            if(!$(this).hasClass("valid")) { valid = false; }
-        })
-
-        $.post('/login',
-        {
-            data: values
-        },
-        function(data, status)
-        {
-            $('#loginSubmit').removeClass("disabled");
-
-            if(data.code == "200")
-            {
-                firebase.analytics().logEvent('log_in');
-                setCookie("username", data.id, 1);
-                window.location.href = "/feed";
-            }
-            if(data.code == "409")
-            {
-                $('#formLoginInputs > div:first-child > span').attr("data-error", "Wrong email/password");
-                $('#formLoginInputs > div > input').val("");
-                $('#formLoginInputs > div > input').removeClass("valid");
-                $('#formLoginInputs > div > input').addClass("invalid");
-            }
-            if(data.code == "500")
-            {
-                alert("Sorry, we are having problems with our servers. Try again later");
-                closeSidebar();
-            }
-        })
-    })
-
-    /****************************** FUNCTIONS *********************************/
-
-    function openSidebar()
+    function joinRoom(id)
     {
-        if(!sidebarOpen)
+        console.log("Joining " + id);
+        $('#initialScreen').hide();
+        $('#createRoom').hide();
+        $('#room').show();
+    }
+
+    function sidebarToggle()
+    {
+        if(sidebar)
         {
-            sidebarOpen = true;
-
-            $('.sidebar').animate
-            ({
-                width: sideNavWidth,
-                left: $(window).width() - sideNavWidth
-            });
-    
-            $('header, #content').animate
-            ({
-                marginRight: sideNavWidth
-            });
-    
-            $('#loginBtn').animate
-            ({
-                opacity: 0
-            });
-
-            $('#logo').animate
-            ({
-                marginLeft: ($('#videoStreamingCard').position()).left - (sideNavWidth/2)
-            })
-
-            $('footer').animate
-            ({
-                right: sideNavWidth/2
-            })
-
+            closeSidebar();
+        }
+        else
+        {
+            openSidebar();
         }
     }
 
     function closeSidebar()
     {
-        sidebarOpen = false;
-
-        $('footer').animate
+        $('#sidebar').animate
         ({
-            right: 0
-        })
-
-        $('.sidebar').animate
-        ({
-            width: 0,
-            left: $(window).width()
-        })
-
-        $('header, #content, footer').animate
-        ({
-            marginRight: 0
+            left: "-" + $('#sidebar').width(),
+        }, 600, function()
+        {
+            $('#sidebar').hide();
+            $('#sidebarToggle').fadeIn("fast");
         });
 
-        $('#loginBtn').animate
+        $('#content').animate
         ({
-            opacity: 1
-        });
+            width: "100%",
+            marginLeft: "0%"
+        }, 600);
 
-        $('#logo').animate
+        sidebar = false;
+    }
+
+    function openSidebar()
+    {
+        $('#sidebarToggle').fadeOut("fast");
+        $('#sidebar').show();
+        $('#sidebar').animate
         ({
-            marginLeft: ($('#videoStreamingCard').position()).left + (sideNavWidth/2)
-        })
+            left: 0
+        }, 600);
+
+        $('#content').animate
+        ({
+            width: "85%",
+            marginLeft: "14%"
+        }, 600);
+
+        sidebar = true;
     }
 })
 
