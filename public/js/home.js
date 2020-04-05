@@ -25,6 +25,13 @@ $(document).ready(function()
 
     //Variables - Sidebar
     var sidebar = true;
+    //Variables - Room
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    var player;
+    var roomID, roomSyncID;
 
     //Positioning/Sizing - Logo : Tag
     $('#usernameDisplay').text(getCookie("username"));
