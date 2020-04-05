@@ -212,6 +212,17 @@ body
         {
             border: 1px solid black;
         }
+        #playerChat
+        {
+            width: 1000px;
+            height: 562.5px;
+
+            #player
+            {
+                width: 100%;
+                height: 100%;
+            }
+        }
     }
 }
 
