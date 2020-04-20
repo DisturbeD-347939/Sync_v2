@@ -200,6 +200,64 @@ body
         }
     }
 
+    #joinRoom
+    {  
+        @include display(flex, row, center, center);
+
+        background-image: url(../img/createRoomImg.png);
+        background-size: contain;
+
+        padding: 10px;
+        width: 20%;
+        border-radius: 5%;
+        
+        #joinRoomContent
+        {
+            @include display(flex, column, center, center);
+
+            width: 100%;
+            height: 100%;
+            border-radius: 5%;
+            padding: 10px;
+
+            background-color: white;
+
+            h2
+            {
+                margin-top: 0px;
+            }
+
+            #joinRoomForm
+            {
+                @include display(flex, column, center, flex-start);
+
+                margin-bottom: 0px;
+        
+                div
+                {
+                    width: 100%;z
+    
+                    input
+                    {
+                        width: 100%;
+                    }
+                }
+
+                label
+                {
+                    font-size: 18px;
+                }
+            }
+    
+            #joinRoomSubmit
+            {
+                background-color: #35364a;
+
+                margin-bottom: 15px;
+            }
+        }
+    }
+
     #room
     {
         @include display(flex, column, center, center);
