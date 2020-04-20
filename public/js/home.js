@@ -380,12 +380,24 @@ $(document).ready(function()
         $('#myRooms').append("<div class='roomTag' name=" + id + "><div>" + roomName + "<div>" + viewersImg + viewersCount + "</div></div></div><hr>");
     }
 
-    function joinRoom(id)
+    function getRoomSyncID(roomID, callback)
     {
-        console.log("Joining " + id);
-        $('#initialScreen').hide();
-        $('#createRoom').hide();
-        $('#room').show();
+        db.ref('Rooms/' + roomID + "/Room/Users/").once('value').then(function(data)
+        { 
+            var lowTimestampIndex = 0;
+            var lowTimestamp = data.val()[Object.keys(data.val())[lowTimestampIndex]]["joined"];
+            
+            for(var i = 0; i < Object.keys(data.val()).length; i++)
+            {
+                if(lowTimestamp > data.val()[Object.keys(data.val())[i]]["joined"])
+                {
+                    lowTimestamp = data.val()[Object.keys(data.val())[i]]["joined"];
+                    lowTimestampIndex = i;
+                }
+            }
+            callback(Object.keys(data.val())[lowTimestampIndex]);
+        })
+    }
     }
 
     function sidebarToggle()
