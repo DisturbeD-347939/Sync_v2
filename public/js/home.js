@@ -25,6 +25,8 @@ $(document).ready(function()
 
     //Variables - Sidebar
     var sidebar = true;
+    $('#sidebarToggle').css('left', $('#sidebar').width());
+
     //Variables - Room
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -49,10 +51,19 @@ $(document).ready(function()
     var createRoomImgLeft = $('#createRoom').position().left;
     $('#createRoomImg').css({'top': createRoomImgTop, 'left': createRoomImgLeft});
 
+    //Player change
+    var intervalID = 0;
+
+    //Animations
+    var createRoomAnimation = false;
+    var joinRoomAnimation = false;
+    var roomAnimation = false;
+    var initialScreenAnimation = false;
+
     //Hiding
     $('#createRoomForm :nth-child(3)').hide();
     $('#createRoom').hide();
-    $('#sidebarToggle').hide();
+    $('#joinRoom').hide();
     $('#room').hide();
 
     /****************************** EVENTS *********************************/
@@ -67,6 +78,14 @@ $(document).ready(function()
         var logOutTop = ($('#logOut').position()).top = $('#sidebar').height() - $('#logOut').height();
         $('#logOut').css('top', logOutTop);
         $('#logOut').css('width', $('#sidebar').width());
+
+        //Positioning/Sizing - Sidebar
+        $('#sidebarToggle').css('left', $('#sidebar').width());
+    }
+
+    window.onbeforeunload = function()
+    {
+        leaveRoom();
     }
 
     //Clicks
@@ -78,15 +97,45 @@ $(document).ready(function()
 
     $('#createRoomBtn').click(function()
     {
+        $('#joinRoom').fadeOut("fast", function()
+        {
+            joinRoomAnimation = true;
+            check();
+        });
+
+        $('#room').fadeOut("fast", function()
+        {
+            roomAnimation = true;
+            check();
+        });
+
         $('#initialScreen').fadeOut("fast", function()
         {
-            $('#createRoom').fadeIn("fast");
-        })
+            initialScreenAnimation = true;
+            check();
+        });
+
+        function check()
+        {
+            if(joinRoomAnimation && roomAnimation && initialScreenAnimation)
+            {
+                joinRoomAnimation = false;
+                roomAnimation = false;
+                initialScreenAnimation = false;
+
+                $('#createRoom').fadeIn("fast");
+            }
+        }
     })
 
     $('#createRoomSubmit').click(function()
     {
         $('#createRoomForm').submit();
+    })
+
+    $('#joinRoomSubmit').click(function()
+    {
+        $('#joinRoomForm').submit();
     })
 
     $('#sidebarToggle').click(function()
@@ -97,6 +146,44 @@ $(document).ready(function()
     $(document).on('click','.roomTag',function()
     {
         joinRoom($(this).attr('name'));
+    })
+
+    $('#joinRoomBtn').click(function()
+    {
+        $('#createRoom').fadeOut("fast", function()
+        {
+            createRoomAnimation = true;
+            check();
+        })
+
+        $('#room').fadeOut("fast", function()
+        {
+            roomAnimation = true;
+            check();
+        })
+
+        $('#initialScreen').fadeOut("fast", function()
+        {
+            initialScreenAnimation = true;
+            check();
+        })
+
+        function check()
+        {
+            if(createRoomAnimation && roomAnimation && initialScreenAnimation)
+            {
+                createRoomAnimation = false;
+                roomAnimation = false;
+                initialScreenAnimation = false;
+
+                $('#joinRoom').fadeIn("fast");
+            }
+        }
+    })
+
+    $('#leaveRoom').click(function()
+    {
+        leaveRoom();
     })
 
     //On change
@@ -181,14 +268,38 @@ $(document).ready(function()
             },
             function(data, status)
             {
+                var date = new Date();
                 if(data.code == "200")
                 {
-                    db.ref('Chats/' + data.res + "/1/").set({name: "Server", message: "Welcome"});
+                    db.ref('Rooms/' + data.res + "/Chat/1/").set({name: "Server", message: "Welcome"});
+                    db.ref('Rooms/' + data.res + "/Room/").set({videoID: "aQS7Py1Fx0s", videoTime: "0", timestamp: date.getTime(), userCount: "0"});
                     addRoom(values["roomName"], data.res);
                     closeSidebar();
                     joinRoom(data.res);
                 }
+                else
+                {
+                    $('createRoomSubmit').prop('disabled', false);
+                }
             })
+        }
+    })
+
+    $('#joinRoomForm').submit(function(e)
+    {
+        e.preventDefault();
+
+        $('joinRoomSubmit').prop('disabled', true);
+
+        var input = $('#roomIDInput').val();
+
+        if(input != "")
+        {
+            console.log("Not empty");
+        }
+        else
+        {
+            $('#joinRoomForm > div > input').addClass("invalid");
         }
     })
 
