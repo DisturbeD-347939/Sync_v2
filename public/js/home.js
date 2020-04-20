@@ -305,6 +305,72 @@ $(document).ready(function()
 
     /****************************** FUNCTIONS **********************************/
 
+    window.onYouTubePlayerAPIReady = function() 
+    {
+        player = new YT.Player('player', 
+        {
+            height: '100%',
+            width: '100%',
+            videoId: 'leOP7rWwBpw',
+            playerVars:
+            {
+                'autoplay': 0,
+                'controls': 1
+            },
+            events: 
+            {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerReady(e) 
+    {
+        console.log("Video ready");
+        e.target.setVolume(10);
+    }
+
+    var done = false;
+
+    function onPlayerStateChange(event) 
+    {
+        if (event.data == 1) 
+        {
+            var sync = setInterval(function()
+            {
+                var date = new Date();
+
+                console.log(roomSyncID + " | " + id);
+                if(roomSyncID == id)
+                {
+                    console.log("Sync with me");
+                    db.ref('Rooms/' + roomID + "/Room/").update({videoTime: Math.trunc(player.getCurrentTime()), timestamp: date.getTime()});
+                }
+                else
+                {
+                    console.log("Sync with other");
+                    db.ref('Rooms/' + roomID + "/Room/").once('value', function(data)
+                    {
+                        var videoTime = data.val()["videoTime"] + Math.trunc(((date.getTime() - data.val()["timestamp"]) / 1000));
+                        player.seekTo(videoTime);
+                    })
+                }
+            }, 3000)
+
+            intervalID = sync;
+        }
+        else
+        {
+            clearInterval(intervalID);
+        }
+    }
+
+    function stopVideo() 
+    {
+        player.stopVideo();
+    }
+
     function addRoom(name, id)
     {
         var roomName = "<p class='roomName'>" + name + "</p>";
