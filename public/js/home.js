@@ -469,6 +469,13 @@ $(document).ready(function()
         }
 
     }
+
+    function leaveRoom()
+    {
+        removeChar(id, "#", function(userID)
+        {
+            db.ref('Rooms/' + roomID + "/Room/Users/" + userID).remove();
+        })
     }
 
     function sidebarToggle()
@@ -491,7 +498,6 @@ $(document).ready(function()
         }, 600, function()
         {
             $('#sidebar').hide();
-            $('#sidebarToggle').fadeIn("fast");
         });
 
         $('#content').animate
@@ -500,12 +506,16 @@ $(document).ready(function()
             marginLeft: "0%"
         }, 600);
 
+        $('#sidebarToggle').animate
+        ({
+            left: "0px"
+        }, 600)
+
         sidebar = false;
     }
 
     function openSidebar()
     {
-        $('#sidebarToggle').fadeOut("fast");
         $('#sidebar').show();
         $('#sidebar').animate
         ({
@@ -517,6 +527,11 @@ $(document).ready(function()
             width: "85%",
             marginLeft: "14%"
         }, 600);
+
+        $('#sidebarToggle').animate
+        ({
+            left: $('#sidebar').width()
+        }, 600)
 
         sidebar = true;
     }
