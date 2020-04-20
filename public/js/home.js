@@ -398,6 +398,16 @@ $(document).ready(function()
             callback(Object.keys(data.val())[lowTimestampIndex]);
         })
     }
+
+    function removeChar(id, char, callback)
+    {
+        callback(id.replace(char, ""))
+    }
+
+    function addChar(id, char, index, callback)
+    {
+        callback(id.slice(0, index) + char + id.slice(index))
+    }
     }
 
     function sidebarToggle()
