@@ -408,6 +408,67 @@ $(document).ready(function()
     {
         callback(id.slice(0, index) + char + id.slice(index))
     }
+
+    function joinRoom(joinID)
+    {
+        roomID = joinID;
+
+        db.ref('Rooms/' + joinID + "/Room/").once('value').then(function(data) 
+        {
+                var userID = id.replace('#', "");
+                removeChar(userID, "#", function(userID)
+                {
+                    var date = new Date();
+                    player.loadVideoById(data.val()["videoID"]);
+                    db.ref('Rooms/' + joinID + "/Room/").once('value', function(data)
+                    {
+                        console.log(data.val()["userCount"]);
+                        var userCount = parseInt(data.val()["userCount"]) + 1;
+                        db.ref('Rooms/' + joinID + "/Room/").update({userCount: userCount});
+                        db.ref('Rooms/' + joinID + "/Room/Users/" + userID + "/").set({joined: date.getTime()});
+                        getRoomSyncID(joinID, function(data)
+                        {
+                            addChar(data, "#", data.length-4, function(data)
+                            {
+                                roomSyncID = data;
+                            });
+                        });
+                    })
+                })
+        });
+
+        //Animations
+        $('#createRoom').fadeOut("fast", function()
+        {
+            createRoomAnimation = true;
+            check();
+        })
+
+        $('#joinRoom').fadeOut("fast", function()
+        {
+            joinRoomAnimation = true;
+            check();
+        })
+
+        $('#initialScreen').fadeOut("fast", function()
+        {
+            initialScreenAnimation = true;
+            check();
+        })
+
+        function check()
+        {
+            if(createRoomAnimation && joinRoomAnimation && initialScreenAnimation)
+            {
+                createRoomAnimation = false;
+                joinRoomAnimation = false;
+                initialScreenAnimation = false;
+
+                $('#room').fadeIn("fast");
+            }
+        }
+
+    }
     }
 
     function sidebarToggle()
