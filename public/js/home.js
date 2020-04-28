@@ -33,7 +33,7 @@ $(document).ready(function()
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     var player;
-    var roomID, roomSyncID;
+    var joinedRoomID, syncMe, firstPlay;
 
     //Positioning/Sizing - Logo : Tag
     $('#usernameDisplay').text(getCookie("username"));
@@ -52,7 +52,7 @@ $(document).ready(function()
     $('#createRoomImg').css({'top': createRoomImgTop, 'left': createRoomImgLeft});
 
     //Player change
-    var intervalID = 0;
+    var videoTime = 0;
 
     //Animations
     var createRoomAnimation = false;
