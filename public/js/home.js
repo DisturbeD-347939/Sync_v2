@@ -425,13 +425,43 @@ $(document).ready(function()
     {
         var roomName = "<p class='roomName'>" + name + "</p>";
         var viewersImg = "<i class='viewersImg material-icons small prefix disable-select'> visibility </i>";
-        var viewersCount = "<p class='viewersCount' > 1 </p> "
+        var viewersCount = "<p class='viewersCount' > 0 </p> "    
 
-        $('#myRooms').append("<div class='roomTag' name=" + id + "><div>" + roomName + "<div>" + viewersImg + viewersCount + "</div></div></div><hr>");
+        $('#myRooms').append("<div class='roomTag' name=" + id + " id=" + id + "><div>" + roomName + "<div>" + viewersCount + viewersImg + "</div></div></div><hr>");
+
+        db.ref('Rooms/' + id + "/Room/Users").on('value', function(snapshot)
+        {
+            if(snapshot.val())
+            {
+                $('#myRooms > #' + id + ' > div > div > p').text(Object.keys(snapshot.val()).length);
+    }
+        })
     }
 
-    function getRoomSyncID(roomID, callback)
+    function joinRoom(roomID)
     {
+        sidebarToggle();
+        $('#myRooms > #' + roomID).css('background-color', "#35364a");
+
+        if(joinedRoomID)
+        {
+            leaveRoom(joinedRoomID);
+        }
+
+        joinedRoomID = roomID;
+
+        db.ref('Rooms/' + roomID + "/Room/").once('value').then(function(data) 
+        {
+            var userID = id.replace('#', "");
+
+            removeChar(userID, "#", function(userID)
+            {
+                db.ref('Rooms/' + roomID + "/Room/Users/" + userID + "/").set({joined: + new Date()});
+            })
+
+            videoTime = data.val()["videoTime"];
+            player.loadVideoById(data.val()["videoID"]);
+
         db.ref('Rooms/' + roomID + "/Room/Users/").once('value').then(function(data)
         { 
             var lowTimestampIndex = 0;
