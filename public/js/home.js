@@ -384,11 +384,11 @@ $(document).ready(function()
                 {
                     db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(player.getCurrentTime()), timestamp: + new Date()});
                 },2500)
-                }
-                else
-                {
+            }
+            else 
+            {
                 if(firstPlay)
-                    {
+                {
                     db.ref('Rooms/' + joinedRoomID + "/Room/").once('value').then(function(data) 
                     {
                         videoTime = data.val()["videoTime"];
@@ -434,7 +434,7 @@ $(document).ready(function()
             if(snapshot.val())
             {
                 $('#myRooms > #' + id + ' > div > div > p').text(Object.keys(snapshot.val()).length);
-    }
+            }
         })
     }
 
@@ -462,19 +462,19 @@ $(document).ready(function()
             videoTime = data.val()["videoTime"];
             player.loadVideoById(data.val()["videoID"]);
 
-        db.ref('Rooms/' + roomID + "/Room/Users/").once('value').then(function(data)
-        { 
-            var lowTimestampIndex = 0;
-            var lowTimestamp = data.val()[Object.keys(data.val())[lowTimestampIndex]]["joined"];
-            
-            for(var i = 0; i < Object.keys(data.val()).length; i++)
-            {
-                if(lowTimestamp > data.val()[Object.keys(data.val())[i]]["joined"])
+            db.ref('Rooms/' + roomID + "/Room/Users/").once('value').then(function(data)
+            { 
+                var lowTimestampIndex = 0;
+                var lowTimestamp = data.val()[Object.keys(data.val())[lowTimestampIndex]]["joined"];
+                
+                for(var i = 0; i < Object.keys(data.val()).length; i++)
                 {
-                    lowTimestamp = data.val()[Object.keys(data.val())[i]]["joined"];
-                    lowTimestampIndex = i;
+                    if(lowTimestamp > data.val()[Object.keys(data.val())[i]]["joined"])
+                    {
+                        lowTimestamp = data.val()[Object.keys(data.val())[i]]["joined"];
+                        lowTimestampIndex = i;
+                    }
                 }
-            }
 
                 addChar(Object.keys(data.val())[lowTimestampIndex], "#", Object.keys(data.val())[lowTimestampIndex].length-4, function(data)
                 {
@@ -529,14 +529,13 @@ $(document).ready(function()
                 $('#room').fadeIn("fast");
             }
         }
-
     }
 
-    function leaveRoom()
+    function leaveRoom(room)
     {
         removeChar(id, "#", function(userID)
         {
-            db.ref('Rooms/' + roomID + "/Room/Users/" + userID).remove();
+            db.ref('Rooms/' + room + "/Room/Users/" + userID).remove();
         })
     }
 
