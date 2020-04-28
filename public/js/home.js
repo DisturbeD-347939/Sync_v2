@@ -475,7 +475,28 @@ $(document).ready(function()
                     lowTimestampIndex = i;
                 }
             }
-            callback(Object.keys(data.val())[lowTimestampIndex]);
+
+                addChar(Object.keys(data.val())[lowTimestampIndex], "#", Object.keys(data.val())[lowTimestampIndex].length-4, function(data)
+                {
+                    console.log(data);
+                    if(data == id)
+                    {
+                        syncMe = true;
+                    }
+                    else
+                    {
+                        syncMe = false;
+                    }
+                })
+    
+            })
+
+            setTimeout(function()
+            {
+                player.seekTo(videoTime);
+                firstPlay = true;
+            }, 1000);
+            
         })
 
         //Animations
