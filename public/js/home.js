@@ -85,7 +85,8 @@ $(document).ready(function()
 
     window.onbeforeunload = function()
     {
-        leaveRoom();
+        leaveRoom(joinedRoomID);
+        return null;
     }
 
     //Clicks
