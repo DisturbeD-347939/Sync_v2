@@ -136,6 +136,50 @@ app.get('/getRooms', (request, response) =>
     });
 })
 
+app.get('/getRoomInfo', (request, response) =>
+{
+    var id = request.query.roomID;
+    var password = request.query.roomPassword;
+    var userID = request.query.userID;
+
+    db.collection('Rooms').get()
+    .then(snapshot =>
+    {
+        if(snapshot["_size"] != 0)
+        {
+            var counter = 0;
+            snapshot.forEach(doc =>
+            {
+                if(doc.id == id)
+                {
+                    db.collection('Rooms').doc(id).get()
+                    .then(doc =>
+                    {   
+                        if(doc.data()["roomPassword"] == password)
+                        {
+                            db.collection('Rooms').doc(id).collection('Users').doc(userID).set({role: "member"})
+                            response.send({code: "200"})
+                        }
+                        else
+                        {
+                            response.send({code: "401"})
+                        }
+                    })
+                }
+                else
+                {
+                    counter++;
+                }
+
+                if(counter >= snapshot["_size"])
+                {
+                    response.send({code: "204"})
+                }
+            })
+        }
+    })
+})
+
 /******************************************* POST ******************************************/
 
 app.post('/register', (request, response) =>
@@ -390,7 +434,7 @@ app.post('/createRoom', (request, response) =>
                 db.collection('Rooms').add(data).then(doc => 
                 {
                     roomID = doc.id;
-                    db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({test: "test"})
+                    db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({role: "admin"})
                     .then(doc =>
                     {
                         response.send({code:"200", res: roomID});

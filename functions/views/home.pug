@@ -58,8 +58,12 @@ html
                     h2 Join room
                     form#joinRoomForm
                         div.input-field
-                            input#roomIDInput.form-control.validate(name="roomName" type="text" maxlength="20" required)
-                            label(for="roomIDInput") Room ID
+                            input#roomJoinIDInput.form-control.validate(name="roomName" type="text" maxlength="20" required)
+                            label(for="roomJoinIDInput") Room ID
+                            span.helper-text(data-error="")
+                        div.input-field
+                            input#roomJoinPasswordInput.form-control.validate(name='roomPassword' type='text' maxlength="128" placeholder="None")
+                            label(for="roomJoinPasswordInput") Password
                             span.helper-text(data-error="")
                     div#joinRoomSubmit.waves-effect.waves-light.btn(type="submit") Join 🤩
             div#room

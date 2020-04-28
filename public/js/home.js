@@ -291,11 +291,21 @@ $(document).ready(function()
 
         $('joinRoomSubmit').prop('disabled', true);
 
-        var input = $('#roomIDInput').val();
+        var roomJoinIDInput = $('#roomJoinIDInput').val();
+        var roomJoinPasswordInput = $('#roomJoinPasswordInput').val();
 
-        if(input != "")
+        if(roomJoinIDInput != "")
         {
-            console.log("Not empty");
+            $.get('./getRoomInfo',
+            {
+                roomID: roomJoinIDInput,
+                roomPassword: roomJoinPasswordInput,
+                userID: id
+            },
+            function(data, status)
+            {
+                console.log(data);
+            })
         }
         else
         {
@@ -397,45 +407,6 @@ $(document).ready(function()
             }
             callback(Object.keys(data.val())[lowTimestampIndex]);
         })
-    }
-
-    function removeChar(id, char, callback)
-    {
-        callback(id.replace(char, ""))
-    }
-
-    function addChar(id, char, index, callback)
-    {
-        callback(id.slice(0, index) + char + id.slice(index))
-    }
-
-    function joinRoom(joinID)
-    {
-        roomID = joinID;
-
-        db.ref('Rooms/' + joinID + "/Room/").once('value').then(function(data) 
-        {
-                var userID = id.replace('#', "");
-                removeChar(userID, "#", function(userID)
-                {
-                    var date = new Date();
-                    player.loadVideoById(data.val()["videoID"]);
-                    db.ref('Rooms/' + joinID + "/Room/").once('value', function(data)
-                    {
-                        console.log(data.val()["userCount"]);
-                        var userCount = parseInt(data.val()["userCount"]) + 1;
-                        db.ref('Rooms/' + joinID + "/Room/").update({userCount: userCount});
-                        db.ref('Rooms/' + joinID + "/Room/Users/" + userID + "/").set({joined: date.getTime()});
-                        getRoomSyncID(joinID, function(data)
-                        {
-                            addChar(data, "#", data.length-4, function(data)
-                            {
-                                roomSyncID = data;
-                            });
-                        });
-                    })
-                })
-        });
 
         //Animations
         $('#createRoom').fadeOut("fast", function()
@@ -536,6 +507,16 @@ $(document).ready(function()
         sidebar = true;
     }
 })
+
+function removeChar(id, char, callback)
+{
+    callback(id.replace(char, ""))
+}
+
+function addChar(id, char, index, callback)
+{
+    callback(id.slice(0, index) + char + id.slice(index))
+}
 
 function getCookie(cname) 
 {
