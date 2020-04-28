@@ -74,8 +74,6 @@ app.get('/getRooms', (request, response) =>
     var roomsJoined = 0;
     var roomIDs = [];
 
-    console.log("HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-
     db.collection('Rooms').get()
     .then(snapshot =>
     {
