@@ -339,41 +339,50 @@ $(document).ready(function()
     function onPlayerReady(e) 
     {
         console.log("Video ready");
-        e.target.setVolume(10);
+        e.target.setVolume(0);
     }
 
-    var done = false;
+    var synchronize;
 
-    function onPlayerStateChange(event) 
+    function masterSynchronize(bool)
     {
-        if (event.data == 1) 
+        if(bool)
         {
-            var sync = setInterval(function()
+            if(syncMe)
             {
-                var date = new Date();
-
-                console.log(roomSyncID + " | " + id);
-                if(roomSyncID == id)
+                synchronize = setInterval(function()
                 {
-                    console.log("Sync with me");
-                    db.ref('Rooms/' + roomID + "/Room/").update({videoTime: Math.trunc(player.getCurrentTime()), timestamp: date.getTime()});
+                    db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(player.getCurrentTime()), timestamp: + new Date()});
+                },2500)
                 }
                 else
                 {
-                    console.log("Sync with other");
-                    db.ref('Rooms/' + roomID + "/Room/").once('value', function(data)
+                if(firstPlay)
                     {
-                        var videoTime = data.val()["videoTime"] + Math.trunc(((date.getTime() - data.val()["timestamp"]) / 1000));
+                    db.ref('Rooms/' + joinedRoomID + "/Room/").once('value').then(function(data) 
+                    {
+                        videoTime = data.val()["videoTime"];
                         player.seekTo(videoTime);
                     })
+                    firstPlay = false;
                 }
-            }, 3000)
-
-            intervalID = sync;
+            }
         }
         else
         {
-            clearInterval(intervalID);
+            clearInterval(synchronize);
+        }
+    }
+
+    function onPlayerStateChange(event) 
+    {
+        if(event.data == 1)
+        {
+            masterSynchronize(true);
+        }
+        else
+        {
+            masterSynchronize(false);
         }
     }
 
