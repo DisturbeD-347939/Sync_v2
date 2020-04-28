@@ -158,7 +158,7 @@ app.get('/getRoomInfo', (request, response) =>
                         if(doc.data()["roomPassword"] == password)
                         {
                             db.collection('Rooms').doc(id).collection('Users').doc(userID).set({role: "member"})
-                            response.send({code: "200"})
+                            response.send({code: "200", roomName: doc.data()["roomName"]});
                         }
                         else
                         {
@@ -176,6 +176,10 @@ app.get('/getRoomInfo', (request, response) =>
                     response.send({code: "204"})
                 }
             })
+        }
+        else
+        {
+            response.send({code: "204"});
         }
     })
 })
