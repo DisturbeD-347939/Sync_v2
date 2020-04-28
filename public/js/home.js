@@ -290,7 +290,8 @@ $(document).ready(function()
     {
         e.preventDefault();
 
-        $('joinRoomSubmit').prop('disabled', true);
+        //console.log(("#joinRoomSubmit").prop('disabled', true));
+        $("#joinRoomSubmit").attr('disabled','disabled');
 
         var roomJoinIDInput = $('#roomJoinIDInput').val();
         var roomJoinPasswordInput = $('#roomJoinPasswordInput').val();
@@ -305,7 +306,36 @@ $(document).ready(function()
             },
             function(data, status)
             {
-                console.log(data);
+                if(data["code"] == "204")
+                {
+                    $('#joinRoomForm > div:first-child > span').attr("data-error", "Room doesn't exist");
+                    $('#joinRoomForm > div:first-child > input').removeClass("valid");
+                    $('#joinRoomForm > div:first-child > input').addClass("invalid");
+                    M.updateTextFields();
+                    setTimeout(function()
+                    {
+                        $('#joinRoomForm > div:first-child > span').attr("data-error", "");
+                        $('#joinRoomForm > div:first-child > input').removeClass("invalid");
+                        M.updateTextFields();
+                        $("#joinRoomSubmit").removeAttr('disabled');
+                    }, 2500)
+                    
+                }
+                else if(data["code"] == "401")
+                {
+                    $('#joinRoomForm > div:last-child > span').attr("data-error", "Wrong password");
+                    $('#joinRoomForm > div:last-child > input').removeClass("valid");
+                    $('#joinRoomForm > div:last-child > input').addClass("invalid");
+                    M.updateTextFields();
+                    setTimeout(function()
+                    {
+                        $('#joinRoomForm > div:last-child > span').attr("data-error", "");
+                        $('#joinRoomForm > div:last-child > input').removeClass("invalid");
+                        M.updateTextFields();
+                        $("#joinRoomSubmit").removeAttr('disabled');
+                    }, 2500)
+                    
+                }
             })
         }
         else
