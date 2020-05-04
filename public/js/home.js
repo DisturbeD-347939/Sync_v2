@@ -64,11 +64,9 @@ $(document).ready(function()
 
     //Hiding
     $('#createRoomForm :nth-child(3)').hide();
-    $('#createRoom').hide();
-    $('#joinRoom').hide();
-    $('#room').hide();
+    $('#createRoom, #joinRoom, #room').hide();
 
-    /****************************** EVENTS *********************************/
+    /****************************** WINDOW *********************************/
 
     //Window events
     window.onresize = function()
@@ -91,32 +89,80 @@ $(document).ready(function()
         return null;
     }
 
-    //Clicks
-    $('#logOut').click(function()
+    /****************************** REQUESTS *********************************/
+
+    $.get('/getRooms',
     {
-        setCookie('username', "", -1);
-        window.location.href = '/';
+        id: id
+    },
+    function(data, status)
+    {
+        if(data.code == "200")
+        {
+            data.res.forEach(room =>
+            {
+                addRoom(room.name, room.id);
+    })
+        }
     })
 
-    $('#createRoomBtn').click(function()
+    $.get('/userProfile',
     {
-        $('#joinRoom').fadeOut("fast", function()
+        id: id
+    },
+    function(data, status)
         {
-            joinRoomAnimation = true;
-            check();
-        });
+        if(data.code == "200")
+        {
+            $('#profilePicture').attr('src', 'https://api.adorable.io/avatars/200/' + data.res + '.png');
+        }
+    })
 
-        $('#room').fadeOut("fast", function()
-        {
-            roomAnimation = true;
-            check();
-        });
+    /****************************** YOUTUBE PLAYER **********************************/
 
-        $('#initialScreen').fadeOut("fast", function()
+    window.onYouTubePlayerAPIReady = function() 
         {
-            initialScreenAnimation = true;
-            check();
+        player = new YT.Player('player', 
+        {
+            height: '100%',
+            width: '100%',
+            videoId: 'leOP7rWwBpw',
+            playerVars:
+            {
+                'autoplay': 0,
+                'controls': 1
+            },
+            events: 
+            {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
         });
+    }
+
+    function onPlayerReady(e) 
+        {
+        e.target.setVolume(0);
+        $('#volumeControl').text("volume_mute")
+    }
+
+    function onPlayerStateChange(event) 
+    {
+        if(event.data == 1)
+        {
+            masterSynchronize(true);
+        }
+        else
+        {
+            masterSynchronize(false);
+        }
+    }
+
+    function stopVideo() 
+    {
+        player.stopVideo();
+    }
+
 
         function check()
         {
@@ -189,11 +235,120 @@ $(document).ready(function()
         leaveRoom();
     })
 
+    $('#logOut').click(function()
+    {
+        setCookie('username', "", -1);
+        window.location.href = '/';
+    })
+
+    function sidebarToggle()
+    {
+        if(sidebar)
+        {
+            closeSidebar();
+        }
+        else
+        {
+            openSidebar();
+        }
+    }
+
+    function closeSidebar()
+    {
+        $('#sidebar').animate
+        ({
+            left: "-" + $('#sidebar').width(),
+        }, 600, function()
+        {
+            $('#sidebar').hide();
+        });
+
+        $('#content').animate
+        ({
+            width: "100%",
+            marginLeft: "0%"
+        }, 600);
+
+        $('#sidebarToggle').animate
+        ({
+            left: "0px"
+        }, 600)
+
+        sidebar = false;
+    }
+
+    function openSidebar()
+    {
+        $('#sidebar').show();
+        $('#sidebar').animate
+        ({
+            left: 0
+        }, 600);
+
+        $('#content').animate
+        ({
+            width: "85%",
+            marginLeft: "14%"
+        }, 600);
+
+        $('#sidebarToggle').animate
+        ({
+            left: $('#sidebar').width()
+        }, 600)
+
+        sidebar = true;
+        }
+
+    /************************************ ROOMS ***********************************/
+
+    $('#createRoomBtn').click(function()
+    {
+        $('#joinRoom').fadeOut("fast", function()
+        {
+            joinRoomAnimation = true;
+            check();
+        });
+
+        $('#room').fadeOut("fast", function()
+        {
+            roomAnimation = true;
+            check();
+        });
+
+        $('#initialScreen').fadeOut("fast", function()
+    {
+            initialScreenAnimation = true;
+            check();
+        });
+
+        function check()
+    {
+            if(joinRoomAnimation && roomAnimation && initialScreenAnimation)
+        {
+                joinRoomAnimation = false;
+                roomAnimation = false;
+                initialScreenAnimation = false;
+
+                $('#createRoom').fadeIn("fast");
+            }
+        }
+    })
+
+    $('#createRoomSubmit').click(function()
+            {
+        $('#createRoomForm').submit();
+            })
+
+    $('#joinRoomSubmit').click(function()
+    {
+        $('#joinRoomForm').submit();
+    })
+
     //On change
     $('#privacyRoomSwitch > label :checkbox').change(function()
     {
         if(this.checked)
-        {
+    {
             $('#createRoomForm :nth-child(3)').show();
            //$('#createRoomForm :nth-child(2)').css("margin-bottom", "0px");
         }
@@ -204,35 +359,6 @@ $(document).ready(function()
             $('#createRoomForm :nth-child(3) > input').removeClass("invalid");
             $('#createRoomForm :nth-child(3) > input').removeClass("valid");
             //$('#createRoomForm :nth-child(2)').css("margin-bottom", "20px");
-        }
-    })
-
-    /****************************** REQUESTS *********************************/
-
-    $.get('/getRooms',
-    {
-        id: id
-    },
-    function(data, status)
-    {
-        if(data.code == "200")
-        {
-            data.res.forEach(room =>
-            {
-                addRoom(room.name, room.id);
-            })
-        }
-    })
-
-    $.get('/userProfile',
-    {
-        id: id
-    },
-    function(data, status)
-    {
-        if(data.code == "200")
-        {
-            $('#profilePicture').attr('src', 'https://api.adorable.io/avatars/200/' + data.res + '.png');
         }
     })
 
@@ -345,81 +471,6 @@ $(document).ready(function()
             $('#joinRoomForm > div > input').addClass("invalid");
         }
     })
-
-    /****************************** FUNCTIONS **********************************/
-
-    window.onYouTubePlayerAPIReady = function() 
-    {
-        player = new YT.Player('player', 
-        {
-            height: '100%',
-            width: '100%',
-            videoId: 'leOP7rWwBpw',
-            playerVars:
-            {
-                'autoplay': 0,
-                'controls': 1
-            },
-            events: 
-            {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
-            }
-        });
-    }
-
-    function onPlayerReady(e) 
-    {
-        console.log("Video ready");
-        e.target.setVolume(0);
-    }
-
-    function masterSynchronize(bool)
-    {
-        if(bool)
-        {
-            if(syncMe)
-            {
-                synchronize = setInterval(function()
-                {
-                    db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(player.getCurrentTime()), timestamp: + new Date()});
-                },2500)
-            }
-            else 
-            {
-                if(firstPlay)
-                {
-                    db.ref('Rooms/' + joinedRoomID + "/Room/").once('value').then(function(data) 
-                    {
-                        videoTime = data.val()["videoTime"];
-                        player.seekTo(videoTime);
-                    })
-                    firstPlay = false;
-                }
-            }
-        }
-        else
-        {
-            clearInterval(synchronize);
-        }
-    }
-
-    function onPlayerStateChange(event) 
-    {
-        if(event.data == 1)
-        {
-            masterSynchronize(true);
-        }
-        else
-        {
-            masterSynchronize(false);
-        }
-    }
-
-    function stopVideo() 
-    {
-        player.stopVideo();
-    }
 
     function addRoom(name, id)
     {
@@ -535,105 +586,50 @@ $(document).ready(function()
         }
     }
 
-    function checkForNewChats()
-    {
-        db.ref('Rooms/' + joinedRoomID + '/Chat/').on('value', function(data)
-        {
-            updateChat();
-        })
-    }
-
-    function updateChat()
-    {
-        db.ref('Rooms/' + joinedRoomID + "/Chat/").once('value').then(function(data) 
-        {
-            if(data.val())
-            {
-                for(var i = 0; i < data.val().length; i++)
-                {
-                    if(data.val()[i])
-                    {
-                        if(data.val()[i]["name"] == id)
-                        {
-                            $('#messages').append("<div class='mine'><p class='message'>" + data.val()[i]["message"] + "</p></div>")
-                        }
-                        else
-                        {
-                            $('#messages').append("<div><p class='nameTag'>" + data.val()[i]["name"] + "</p><p class='message'>" + data.val()[i]["message"] + "</p></div>");
-                        }
-                    }
-                }
-            }
-        })
-    }
-
     function leaveRoom(room)
     {
+        clearInterval(checkVideoTime);
+
         removeChar(id, "#", function(userID)
         {
             db.ref('Rooms/' + room + "/Room/Users/" + userID).remove();
         })
     }
 
-    function sidebarToggle()
+    /************************************ SYNCHRONIZATION ***********************************/
+
+    function masterSynchronize(bool)
+            {
+        if(bool)
+                {
+            if(syncMe)
+                    {
+                synchronize = setInterval(function()
+                        {
+                    db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(player.getCurrentTime()), timestamp: + new Date()});
+                },2500)
+                        }
+                        else
+                        {
+                if(firstPlay)
     {
-        if(sidebar)
+                    db.ref('Rooms/' + joinedRoomID + "/Room/").once('value').then(function(data) 
         {
-            closeSidebar();
+                        videoTime = data.val()["videoTime"];
+                        player.seekTo(videoTime);
+        })
+                    firstPlay = false;
+                }
+    }
         }
         else
         {
-            openSidebar();
-        }
+            clearInterval(synchronize);
     }
-
-    function closeSidebar()
-    {
-        $('#sidebar').animate
-        ({
-            left: "-" + $('#sidebar').width(),
-        }, 600, function()
-        {
-            $('#sidebar').hide();
-        });
-
-        $('#content').animate
-        ({
-            width: "100%",
-            marginLeft: "0%"
-        }, 600);
-
-        $('#sidebarToggle').animate
-        ({
-            left: "0px"
-        }, 600)
-
-        sidebar = false;
-    }
-
-    function openSidebar()
-    {
-        $('#sidebar').show();
-        $('#sidebar').animate
-        ({
-            left: 0
-        }, 600);
-
-        $('#content').animate
-        ({
-            width: "85%",
-            marginLeft: "14%"
-        }, 600);
-
-        $('#sidebarToggle').animate
-        ({
-            left: $('#sidebar').width()
-        }, 600)
-
-        sidebar = true;
     }
 
     /************************************ CHAT ***********************************/
+
     $('#sendMessageBtn').click(function()
     {
         if($('#sendMessageInput').val())
@@ -655,7 +651,54 @@ $(document).ready(function()
             })
         }
     })
+
+    function checkForNewChats()
+    {
+        db.ref('Rooms/' + joinedRoomID + '/Chat/').on('value', function(data)
+        {
+            updateChat();
+        })
+    }
+
+    function updateChat()
+    {
+        $('#messages').empty();
+        db.ref('Rooms/' + joinedRoomID + "/Chat/").once('value').then(function(data) 
+        {
+            if(data.val())
+            {
+                for(var i = 0; i < data.val().length; i++)
+                {
+                    if(data.val()[i])
+                    {
+                        if(data.val()[i]["name"] == id)
+                        {
+                            $('#messages').append("<div class='mine'><p class='message'>" + data.val()[i]["message"] + "</p></div>")
+                        }
+                        else
+                        {
+                            if($('#messages > div:last-child > .nameTag').text() == data.val()[i]["name"] || $('#messages > div:last-child').attr('name') == data.val()[i]["name"])
+                            {
+                                $('#messages').append("<div name='" + data.val()[i]["name"] + "'><p class='message'>" + data.val()[i]["message"] + "</p></div>");
+                            }
+                            else
+                            {
+                                $('#messages').append("<div><p class='nameTag'>" + data.val()[i]["name"] + "</p><p class='message'>" + data.val()[i]["message"] + "</p></div>");
+                            }
+                        }
+                    }
+
+                    if(i+1 >= data.val().length)
+                    {
+                        $("#messages").scrollTop($("#messages")[0].scrollHeight);
+                    }
+                }
+            }
+        })
+    }
 })
+
+/************************************ GENERAL FUNCTIONS ***********************************/
 
 function removeChar(id, char, callback)
 {
