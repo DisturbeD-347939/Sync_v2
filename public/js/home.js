@@ -53,8 +53,13 @@ $(document).ready(function()
     var createRoomImgLeft = $('#createRoom').position().left;
     $('#createRoomImg').css({'top': createRoomImgTop, 'left': createRoomImgLeft});
 
-    //Player change
-    
+    //Room controls
+    var checkVideoTime;
+    var previousWidth = 0;
+    $('#controlSlider').css('top', $('#controlSlider').position().top - $('#controlSlider').height()/2 - 3);
+
+    //Room controls - Hiding elements
+    $('#controlSlider').css('opacity', '0');
 
     //Animations
     var createRoomAnimation = false;
@@ -102,7 +107,7 @@ $(document).ready(function()
             data.res.forEach(room =>
             {
                 addRoom(room.name, room.id);
-    })
+            })
         }
     })
 
@@ -111,7 +116,7 @@ $(document).ready(function()
         id: id
     },
     function(data, status)
-        {
+    {
         if(data.code == "200")
         {
             $('#profilePicture').attr('src', 'https://api.adorable.io/avatars/200/' + data.res + '.png');
@@ -121,7 +126,7 @@ $(document).ready(function()
     /****************************** YOUTUBE PLAYER **********************************/
 
     window.onYouTubePlayerAPIReady = function() 
-        {
+    {
         player = new YT.Player('player', 
         {
             height: '100%',
@@ -141,7 +146,7 @@ $(document).ready(function()
     }
 
     function onPlayerReady(e) 
-        {
+    {
         e.target.setVolume(0);
         $('#volumeControl').text("volume_mute")
     }
@@ -163,29 +168,119 @@ $(document).ready(function()
         player.stopVideo();
     }
 
+    /****************************** VIDEO CONTROLS **********************************/
 
-        function check()
+    var playTimeHover = false;
+    var controlSliderHover = false;
+    var controlSliderInitialLeft = 0;
+    var boolControlSliderInitialLeft = false;
+    var isDraggingControlSlider = false;
+    var isClicked = false;
+
+    $('#controlSlider').draggable
+    ({
+        axis: "x",
+        containment: 'parent'
+    });
+
+    $('#controlSlider').mousedown(function()
+    {
+        isDraggingControlSlider = false;
+        isClicked = true;
+    }) 
+
+    $('#controlSlider').mousemove(function()
+    {
+        if(isClicked)
         {
-            if(joinRoomAnimation && roomAnimation && initialScreenAnimation)
-            {
-                joinRoomAnimation = false;
-                roomAnimation = false;
-                initialScreenAnimation = false;
-
-                $('#createRoom').fadeIn("fast");
-            }
+            var sliderPercentage = (($('#controlSlider').position().left - controlSliderInitialLeft) * 100) / $('#playTime').width();
+            var seekToThis = (sliderPercentage * player.getDuration()) / 100;
+            $('#popupTimer').text(Math.trunc(seekToThis/60) + ":" + Math.trunc(seekToThis%60));
         }
     })
 
-    $('#createRoomSubmit').click(function()
+    $('#controlSlider').mouseup(function()
     {
-        $('#createRoomForm').submit();
+        isClicked = false;
+        var sliderPercentage = (($('#controlSlider').position().left - controlSliderInitialLeft) * 100) / $('#playTime').width();
+        var seekToThis = (sliderPercentage * player.getDuration()) / 100;
+        player.seekTo(seekToThis);
+        //$('#controlSlider').css('left', $('#controlSlider').position().left + controlSliderInitialLeft);
     })
 
-    $('#joinRoomSubmit').click(function()
+    function startControls()
     {
-        $('#joinRoomForm').submit();
+        checkVideoTime = setInterval(function()
+        {
+            if(!boolControlSliderInitialLeft)
+            {
+                controlSliderInitialLeft = $('#controlSlider').position().left;
+                if(controlSliderInitialLeft != 0)
+                {
+                    boolControlSliderInitialLeft = true;
+                }
+            } 
+
+            var parseCurrentPlayTime = Math.trunc(player.getCurrentTime());
+            var parseCurrentPlayTimeSeconds = Math.trunc(parseCurrentPlayTime%60);
+
+            //Makes a number look like 2:03 instead of 2:3
+            if(parseCurrentPlayTimeSeconds < 10)
+            {
+                parseCurrentPlayTimeSeconds = "0" + parseCurrentPlayTimeSeconds;
+            }
+
+            //Update playtime values
+            $('#playTimeNumbers').text(Math.trunc(parseCurrentPlayTime/60) + ":" + parseCurrentPlayTimeSeconds + " / " + Math.trunc(player.getDuration()/60) + ":" + Math.trunc(player.getDuration()%60));
+
+            //Get percentage of video done to carry on to the slider
+            var videoPlayPercentage = ( Math.trunc(player.getCurrentTime()) * 100) / Math.trunc(player.getDuration());
+            $('.determinate').width(videoPlayPercentage + "%");
+
+            //Make the control for the slider follow the slider
+            $('#controlSlider').css('left', controlSliderInitialLeft + $('.determinate').width() - 2);
+        }, 1000)
+    }
+
+    $('#playTime > .progress').hover(
+    function()
+    {
+        playTimeHover = true;
+        hoverCheck();
+    },
+    function()
+    {
+        playTimeHover = false;
+        hoverCheck();
     })
+
+    $('#controlSlider').hover(
+    function()
+    {
+        controlSliderHover = true;
+        hoverCheck();
+    },
+    function()
+    {
+        controlSliderHover = false;
+        hoverCheck();
+    })
+
+    function hoverCheck()
+    {
+        if(controlSliderHover || playTimeHover)
+        {
+            $('#controlSlider').css('opacity', '1');
+            $('.progress').css('padding', '4px 0px');
+        }
+        else
+        {
+            $('#controlSlider').css('opacity', '0');
+            $('.progress').css('padding', '2px 0px');
+        }
+    }
+
+    /************************************ SIDEBAR ***********************************/
 
     $('#sidebarToggle').click(function()
     {
@@ -297,7 +392,7 @@ $(document).ready(function()
         }, 600)
 
         sidebar = true;
-        }
+    }
 
     /************************************ ROOMS ***********************************/
 
@@ -316,15 +411,15 @@ $(document).ready(function()
         });
 
         $('#initialScreen').fadeOut("fast", function()
-    {
+        {
             initialScreenAnimation = true;
             check();
         });
 
         function check()
-    {
-            if(joinRoomAnimation && roomAnimation && initialScreenAnimation)
         {
+            if(joinRoomAnimation && roomAnimation && initialScreenAnimation)
+            {
                 joinRoomAnimation = false;
                 roomAnimation = false;
                 initialScreenAnimation = false;
@@ -335,9 +430,9 @@ $(document).ready(function()
     })
 
     $('#createRoomSubmit').click(function()
-            {
+    {
         $('#createRoomForm').submit();
-            })
+    })
 
     $('#joinRoomSubmit').click(function()
     {
@@ -348,7 +443,7 @@ $(document).ready(function()
     $('#privacyRoomSwitch > label :checkbox').change(function()
     {
         if(this.checked)
-    {
+        {
             $('#createRoomForm :nth-child(3)').show();
            //$('#createRoomForm :nth-child(2)').css("margin-bottom", "0px");
         }
@@ -492,6 +587,8 @@ $(document).ready(function()
     function joinRoom(roomID)
     {
         sidebarToggle();
+        startControls();
+
         $('#myRooms > #' + roomID).css('background-color', "#35364a");
 
         if(joinedRoomID)
@@ -599,33 +696,33 @@ $(document).ready(function()
     /************************************ SYNCHRONIZATION ***********************************/
 
     function masterSynchronize(bool)
-            {
+    {
         if(bool)
-                {
+        {
             if(syncMe)
-                    {
+            {
                 synchronize = setInterval(function()
-                        {
+                {
                     db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(player.getCurrentTime()), timestamp: + new Date()});
                 },2500)
-                        }
-                        else
-                        {
+            }
+            else 
+            {
                 if(firstPlay)
-    {
+                {
                     db.ref('Rooms/' + joinedRoomID + "/Room/").once('value').then(function(data) 
-        {
+                    {
                         videoTime = data.val()["videoTime"];
                         player.seekTo(videoTime);
-        })
+                    })
                     firstPlay = false;
                 }
-    }
+            }
         }
         else
         {
             clearInterval(synchronize);
-    }
+        }
     }
 
     /************************************ CHAT ***********************************/
