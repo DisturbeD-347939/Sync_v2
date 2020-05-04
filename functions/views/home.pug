@@ -16,6 +16,7 @@ html
         link(href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet")
         script(src="./js/materialize.js")
         script(src="./js/jquery.js")
+        script(src="https://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous")
         script(src="./js/home.js")
     body
         div#sidebar
@@ -68,8 +69,17 @@ html
                     div#joinRoomSubmit.waves-effect.waves-light.btn Join 🤩
             div#room
                 div#playerChat
-                    div#player(allow="autoplay" fullscreen)
+                    div#video
+                        div#player(allow="autoplay" fullscreen)
+                        div#playTime
+                            div.progress
+                                div.determinate
+                            div#controlSlider
+                            //input#playTimeInput(type="range" min="0")
                         div#controls
+                            i#playPause.material-icons.small play_arrow
+                            i#volumeControl.material-icons.small
+                            p#playTimeNumbers 0:00 / 0:00
                     div#chat
                         div#messages
                         div#sendMessage
