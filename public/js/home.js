@@ -27,13 +27,15 @@ $(document).ready(function()
     var sidebar = true;
     $('#sidebarToggle').css('left', $('#sidebar').width());
 
-    //Variables - Room
+    //Variables - Youtube Player API
+    var player;
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    var player;
-    var joinedRoomID, syncMe, firstPlay;
+
+    //Variables - Room
+    var joinedRoomID, synchronize, syncMe, firstPlay, videoTime;
 
     //Positioning/Sizing - Logo : Tag
     $('#usernameDisplay').text(getCookie("username"));
@@ -52,7 +54,7 @@ $(document).ready(function()
     $('#createRoomImg').css({'top': createRoomImgTop, 'left': createRoomImgLeft});
 
     //Player change
-    var videoTime = 0;
+    
 
     //Animations
     var createRoomAnimation = false;
@@ -272,7 +274,7 @@ $(document).ready(function()
                 var date = new Date();
                 if(data.code == "200")
                 {
-                    db.ref('Rooms/' + data.res + "/Chat/1/").set({name: "Server", message: "Welcome"});
+                    //db.ref('Rooms/' + data.res + "/Chat/1/").set({name: "Server", message: "Welcome"});
                     db.ref('Rooms/' + data.res + "/Room/").set({videoID: "aQS7Py1Fx0s", videoTime: "0", timestamp: date.getTime(), userCount: "0"});
                     addRoom(values["roomName"], data.res);
                     closeSidebar();
@@ -371,8 +373,6 @@ $(document).ready(function()
         console.log("Video ready");
         e.target.setVolume(0);
     }
-
-    var synchronize;
 
     function masterSynchronize(bool)
     {
@@ -478,7 +478,6 @@ $(document).ready(function()
 
                 addChar(Object.keys(data.val())[lowTimestampIndex], "#", Object.keys(data.val())[lowTimestampIndex].length-4, function(data)
                 {
-                    console.log(data);
                     if(data == id)
                     {
                         syncMe = true;
@@ -496,7 +495,12 @@ $(document).ready(function()
                 player.seekTo(videoTime);
                 firstPlay = true;
             }, 1000);
-            
+
+            //Welcome message
+            $('#messages').append("<div class='server'><p class='nameTag'>" + "Server" + "</p><hr><p class='message'>" + "Welcome to " + $('#myRooms > #' + roomID + ' > div > p').html() + "</p></div>");
+
+            updateChat();
+            checkForNewChats();
         })
 
         //Animations
@@ -529,6 +533,38 @@ $(document).ready(function()
                 $('#room').fadeIn("fast");
             }
         }
+    }
+
+    function checkForNewChats()
+    {
+        db.ref('Rooms/' + joinedRoomID + '/Chat/').on('value', function(data)
+        {
+            updateChat();
+        })
+    }
+
+    function updateChat()
+    {
+        db.ref('Rooms/' + joinedRoomID + "/Chat/").once('value').then(function(data) 
+        {
+            if(data.val())
+            {
+                for(var i = 0; i < data.val().length; i++)
+                {
+                    if(data.val()[i])
+                    {
+                        if(data.val()[i]["name"] == id)
+                        {
+                            $('#messages').append("<div class='mine'><p class='message'>" + data.val()[i]["message"] + "</p></div>")
+                        }
+                        else
+                        {
+                            $('#messages').append("<div><p class='nameTag'>" + data.val()[i]["name"] + "</p><p class='message'>" + data.val()[i]["message"] + "</p></div>");
+                        }
+                    }
+                }
+            }
+        })
     }
 
     function leaveRoom(room)
