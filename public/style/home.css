@@ -10,7 +10,8 @@ body {
   position: fixed;
   width: 15%;
   height: 100%;
-  border-right: 1px solid black; }
+  border-right: 1px solid black;
+  background-color: #EDF0ED; }
   #sidebar #logoTag {
     display: flex;
     flex-direction: row;
@@ -163,17 +164,90 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; }
-    #content #room p {
-      border: 1px solid black; }
-    #content #room div {
-      border: 1px solid black; }
+    align-items: center;
+    width: 90%;
+    height: 100%; }
     #content #room #playerChat {
-      width: 1000px;
-      height: 562.5px; }
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 80%; }
       #content #room #playerChat #player {
-        width: 100%;
+        width: 75%;
         height: 100%; }
+      #content #room #playerChat #chat {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 25%;
+        height: 100%;
+        border: 1px solid grey;
+        border-top-left-radius: 5%;
+        border-top-right-radius: 5%;
+        margin-left: 20px;
+        background-color: #EDF0ED; }
+        #content #room #playerChat #chat #messages {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          align-items: flex-start;
+          height: 100%;
+          width: 90%;
+          padding-bottom: 10px;
+          padding-top: 10px; }
+          #content #room #playerChat #chat #messages div {
+            margin: 5px 0px; }
+            #content #room #playerChat #chat #messages div p {
+              margin: 0px; }
+            #content #room #playerChat #chat #messages div .nameTag {
+              font-size: 12px;
+              margin-left: 15px; }
+            #content #room #playerChat #chat #messages div .message {
+              display: inline-block;
+              width: auto;
+              padding: 10px 15px;
+              border-radius: 25px;
+              color: white;
+              background-color: #35364a; }
+          #content #room #playerChat #chat #messages .mine {
+            align-self: flex-end; }
+            #content #room #playerChat #chat #messages .mine .message {
+              background-color: #ef863d; }
+          #content #room #playerChat #chat #messages .server {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            align-self: center;
+            width: 100%; }
+            #content #room #playerChat #chat #messages .server hr {
+              width: 90%; }
+            #content #room #playerChat #chat #messages .server .nameTag {
+              font-size: 15px;
+              margin-left: 0px; }
+            #content #room #playerChat #chat #messages .server .message {
+              color: grey;
+              background-color: transparent;
+              padding-top: 0px; }
+        #content #room #playerChat #chat #sendMessage {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          border-top: 1px solid grey;
+          width: 100%; }
+          #content #room #playerChat #chat #sendMessage input {
+            margin-left: 5px;
+            margin-bottom: 0px;
+            border-color: "none";
+            border-bottom: 0px;
+            box-shadow: "none"; }
+          #content #room #playerChat #chat #sendMessage div {
+            margin-right: 5px;
+            margin-left: 5px; }
 
 @media screen and (max-width: 1380px) {
   #usernameDisplay {

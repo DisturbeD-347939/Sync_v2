@@ -11,6 +11,7 @@ $pallete2: #f49030;
 $pallete3: #f3f0ee;
 $pallete4: #3c3f4c;
 $pallete5: #35364a;
+$pallete6: #EDF0ED;
 
 body
 {
@@ -28,6 +29,7 @@ body
     height: 100%;
 
     border-right: 1px solid black;
+    background-color: $pallete6;
 
     #logoTag
     {
@@ -259,23 +261,131 @@ body
     {
         @include display(flex, column, center, center);
 
-        p
-        {
-            border: 1px solid black;
-        }
-        div
-        {
-            border: 1px solid black;
-        }
+        width: 90%;
+        height: 100%;
+
         #playerChat
         {
-            width: 1000px;
-            height: 562.5px;
+            @include display(flex, row, center, center);
+
+            width: 100%;
+            height: 80%;
 
             #player
             {
-                width: 100%;
+                width: 75%;
                 height: 100%;
+            }
+
+            #chat
+            {
+                @include display(flex, column, center, center);
+
+                width: 25%;
+                height: 100%;
+                border: 1px solid grey;
+                border-top-left-radius: 5%;
+                border-top-right-radius: 5%;
+                margin-left: 20px;
+                
+                background-color: $pallete6;
+
+                #messages
+                {
+                    @include display(flex, column, flex-end, flex-start);
+
+                    height: 100%;
+                    width: 90%;
+                    padding-bottom: 10px;
+                    padding-top: 10px;
+
+                    div
+                    {
+                        margin: 5px 0px;
+
+                        p
+                        {
+                            margin: 0px;
+                        }
+
+                        .nameTag
+                        {
+                            font-size: 12px;
+                            margin-left: 15px;
+                        }
+
+                        .message
+                        {
+                            display: inline-block;
+                            width: auto;
+                            padding: 10px 15px;
+                            border-radius: 25px;
+
+                            color: white;
+                            background-color: $pallete5;
+                        }
+                    }
+
+                    .mine
+                    {
+                        align-self: flex-end;
+
+                        .message
+                        {
+                            background-color: $pallete1;
+                        }
+                    }
+
+                    .server
+                    {
+                        @include display(flex, column, center, center);
+
+                        align-self: center;
+
+                        width: 100%;
+
+                        hr
+                        {
+                            width: 90%;
+                        }
+
+                        .nameTag
+                        {
+                            font-size: 15px;
+                            margin-left: 0px;
+                        }
+
+                        .message
+                        {
+                            color: grey;
+                            background-color: transparent;
+                            padding-top: 0px;
+                        }
+                    }
+                }
+
+                #sendMessage
+                {
+                    @include display(flex, row, space-between, center);
+
+                    border-top: 1px solid grey;
+                    width: 100%;
+
+                    input
+                    {
+                        margin-left: 5px;
+                        margin-bottom: 0px;
+                        border-color: "none";
+                        border-bottom: 0px;
+                        box-shadow: "none"
+                    }
+
+                    div
+                    {
+                        margin-right: 5px;
+                        margin-left: 5px;
+                    }
+                }
             }
         }
     }
