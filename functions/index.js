@@ -49,8 +49,6 @@ app.get('/userProfile', (request, response) =>
 {
     var data = request.query.id;
 
-    console.log("Retrieving " + data + " info");
-
     db.collection('Users').doc(data).get()
     .then(doc =>
         {
@@ -93,7 +91,6 @@ app.get('/getRooms', (request, response) =>
                     snapshot.forEach(doc =>
                     {
                         counterUsers++;
-                        console.log(doc.id == data);
                         if(doc.id == data)
                         {
                             roomIDs[roomsJoined] =
@@ -108,25 +105,20 @@ app.get('/getRooms', (request, response) =>
                         {
                             counterRooms++;
                         }
-
-                        console.log(counterRooms + " | " + roomsSize + " | " + counterUsers + " | " + usersSize)
                         if(counterRooms >= roomsSize && counterUsers >= usersSize)
                         {
-                            console.log("sent");
                             response.send({code: "200", res: roomIDs});
                         }
                     })
                 })
                 .catch(err => 
                 {
-                    console.log(err);
                     response.send({code: "500", err: err});
                 });
             })
         }
         else
         {
-            console.log("Sent 2");
             response.send({code: "200", res: roomIDs})
         }
     })
@@ -256,7 +248,6 @@ app.post('/register', (request, response) =>
                                                         default:
                                                             uniqueID = data.username + "#" + ID;
                                                     }
-                                                    console.log("Getting random words");
                                                     fetch('https://random-word-api.herokuapp.com/word?number=2')
                                                     .then(res => res.json())
                                                     .then(json =>
