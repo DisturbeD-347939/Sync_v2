@@ -596,6 +596,29 @@ $(document).ready(function()
 
         sidebar = true;
     }
+
+    /************************************ CHAT ***********************************/
+    $('#sendMessageBtn').click(function()
+    {
+        if($('#sendMessageInput').val())
+        {
+            db.ref('Rooms/' + joinedRoomID + "/Chat/").once('value').then(function(data) 
+            {
+                console.log(data.val());
+                if(data.val())
+                {
+                    db.ref('Rooms/' + joinedRoomID + "/Chat/" + data.val().length + "/").set({name: id, message: $('#sendMessageInput').val()});
+                    $('#sendMessageInput').val("");
+                }
+                else
+                {
+                    console.log($('#sendMessageInput').val());
+                    db.ref('Rooms/' + joinedRoomID + "/Chat/0/").set({name: id, message: $('#sendMessageInput').val()});
+                    $('#sendMessageInput').val("");
+                }
+            })
+        }
+    })
 })
 
 function removeChar(id, char, callback)

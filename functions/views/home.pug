@@ -67,12 +67,15 @@ html
                             span.helper-text(data-error="")
                     div#joinRoomSubmit.waves-effect.waves-light.btn Join 🤩
             div#room
-                h1 WORK IN PROGRESS
-                p#roomName Name
                 div#playerChat
                     div#player(allow="autoplay" fullscreen)
+                        div#controls
                     div#chat
-                button#leaveRoom Leave
+                        div#messages
+                        div#sendMessage
+                            input#sendMessageInput.form-control.validate(name="sendChatMessage" type="text", maxlength="128", placeholder="Send a message...")
+                            div#sendMessageBtn.waves-effect.waves-light.black.btn Send
+                div#searchBar test
                 
                 
 
