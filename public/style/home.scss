@@ -271,11 +271,82 @@ body
             width: 100%;
             height: 80%;
 
-            #player
+            #video
             {
+                @include display(flex, column, center, center);
+                background-color: black;
+
                 width: 75%;
                 height: 100%;
+
+                #playTime
+                {
+                    margin: 0px;
+                    width: 98%;
+
+                    .progress
+                    {
+                        cursor: pointer;
+                        
+                        margin: 0px;
+                        padding: 2px 0px;
+                    }
+
+                    #controlSlider
+                    {
+                        position: absolute;
+                        width: 15px;
+                        height: 15px;
+
+                        border-radius: 50%;
+                        background-color: $pallete1;
+                    }
+
+                    /*
+                    input[type=range]::-webkit-slider-thumb 
+                    {
+                        background-color: $pallete1;
+                    }
+
+                    input[type=range]::-moz-range-thumb 
+                    {
+                        background-color: $pallete1;
+                    }
+
+                    input[type=range]::-ms-thumb 
+                    {   
+                        background-color: $pallete1;
+                    }
+                    */
+                }
+
+                #player
+                {
+                    width: 100%;
+                    height: 100%;
+                }
+
+                #controls
+                {
+                    @include display(flex, row, flex-start, center);
+
+                    border-top: 1px solid black;
+                    background-color: black;
+
+                    width: 100%;
+                    height: 35px;
+
+                    color: white;
+
+                    i
+                    {
+                        width: 50px;
+                        text-align: center;
+                    }
+                }
             }
+
+            
 
             #chat
             {
@@ -292,12 +363,10 @@ body
 
                 #messages
                 {
-                    @include display(flex, column, flex-end, flex-start);
-
+                    position: relative;
                     height: 100%;
                     width: 90%;
-                    padding-bottom: 10px;
-                    padding-top: 10px;
+                    overflow-y: scroll;
 
                     div
                     {
@@ -328,7 +397,8 @@ body
 
                     .mine
                     {
-                        align-self: flex-end;
+                        @include display(flex, column, center, flex-end);
+                        //align-self: flex-end;
 
                         .message
                         {

@@ -174,9 +174,59 @@ body {
       align-items: center;
       width: 100%;
       height: 80%; }
-      #content #room #playerChat #player {
+      #content #room #playerChat #video {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: black;
         width: 75%;
         height: 100%; }
+        #content #room #playerChat #video #playTime {
+          margin: 0px;
+          width: 98%;
+                    /*
+                    input[type=range]::-webkit-slider-thumb 
+                    {
+                        background-color: $pallete1;
+                    }
+
+                    input[type=range]::-moz-range-thumb 
+                    {
+                        background-color: $pallete1;
+                    }
+
+                    input[type=range]::-ms-thumb 
+                    {   
+                        background-color: $pallete1;
+                    }
+                    */ }
+          #content #room #playerChat #video #playTime .progress {
+            cursor: pointer;
+            margin: 0px;
+            padding: 2px 0px; }
+          #content #room #playerChat #video #playTime #controlSlider {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #ef863d; }
+        #content #room #playerChat #video #player {
+          width: 100%;
+          height: 100%; }
+        #content #room #playerChat #video #controls {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+          border-top: 1px solid black;
+          background-color: black;
+          width: 100%;
+          height: 35px;
+          color: white; }
+          #content #room #playerChat #video #controls i {
+            width: 50px;
+            text-align: center; }
       #content #room #playerChat #chat {
         display: flex;
         flex-direction: column;
@@ -190,14 +240,10 @@ body {
         margin-left: 20px;
         background-color: #EDF0ED; }
         #content #room #playerChat #chat #messages {
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          align-items: flex-start;
+          position: relative;
           height: 100%;
           width: 90%;
-          padding-bottom: 10px;
-          padding-top: 10px; }
+          overflow-y: scroll; }
           #content #room #playerChat #chat #messages div {
             margin: 5px 0px; }
             #content #room #playerChat #chat #messages div p {
@@ -213,7 +259,10 @@ body {
               color: white;
               background-color: #35364a; }
           #content #room #playerChat #chat #messages .mine {
-            align-self: flex-end; }
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end; }
             #content #room #playerChat #chat #messages .mine .message {
               background-color: #ef863d; }
           #content #room #playerChat #chat #messages .server {
