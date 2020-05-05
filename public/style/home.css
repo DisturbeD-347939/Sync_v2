@@ -184,27 +184,14 @@ body {
         height: 100%; }
         #content #room #playerChat #video #playTime {
           margin: 0px;
-          width: 98%;
-                    /*
-                    input[type=range]::-webkit-slider-thumb 
-                    {
-                        background-color: $pallete1;
-                    }
-
-                    input[type=range]::-moz-range-thumb 
-                    {
-                        background-color: $pallete1;
-                    }
-
-                    input[type=range]::-ms-thumb 
-                    {   
-                        background-color: $pallete1;
-                    }
-                    */ }
+          width: 98%; }
           #content #room #playerChat #video #playTime .progress {
             cursor: pointer;
             margin: 0px;
-            padding: 2px 0px; }
+            padding: 2px 0px;
+            background-color: #3c3f4c; }
+            #content #room #playerChat #video #playTime .progress .determinate {
+              background-color: #ef863d; }
           #content #room #playerChat #video #playTime #controlSlider {
             position: absolute;
             width: 15px;
@@ -213,9 +200,11 @@ body {
             background-color: #ef863d; }
             #content #room #playerChat #video #playTime #controlSlider #popupTimer {
               position: relative;
-              top: -20px;
+              top: -23px;
               left: -5px;
-              color: white; }
+              -webkit-text-stroke: 0.1px black;
+              font-size: 16px;
+              color: #ef863d; }
         #content #room #playerChat #video #player {
           width: 100%;
           height: 100%; }
@@ -230,6 +219,7 @@ body {
           height: 35px;
           color: white; }
           #content #room #playerChat #video #controls i {
+            cursor: pointer;
             width: 50px;
             text-align: center; }
       #content #room #playerChat #chat {

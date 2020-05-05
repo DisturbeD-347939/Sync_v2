@@ -290,6 +290,13 @@ body
                         
                         margin: 0px;
                         padding: 2px 0px;
+
+                        background-color: $pallete4;
+
+                        .determinate
+                        {
+                            background-color: $pallete1;
+                        }
                     }
 
                     #controlSlider
@@ -304,29 +311,14 @@ body
                         #popupTimer
                         {
                             position: relative;
-                            top: -20px;
+                            top: -23px;
                             left: -5px;
+                            -webkit-text-stroke: 0.1px black;
+                            font-size: 16px;
 
-                            color: white;
+                            color: $pallete1;
                         }
                     }
-
-                    /*
-                    input[type=range]::-webkit-slider-thumb 
-                    {
-                        background-color: $pallete1;
-                    }
-
-                    input[type=range]::-moz-range-thumb 
-                    {
-                        background-color: $pallete1;
-                    }
-
-                    input[type=range]::-ms-thumb 
-                    {   
-                        background-color: $pallete1;
-                    }
-                    */
                 }
 
                 #player
@@ -349,13 +341,12 @@ body
 
                     i
                     {
+                        cursor: pointer;
                         width: 50px;
                         text-align: center;
                     }
                 }
             }
-
-            
 
             #chat
             {
