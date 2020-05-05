@@ -14,6 +14,20 @@ This project is **still in development** with many more features that I expect t
 To see some images check out this [link](https://imgur.com/a/uRXaZkj)
 
 ---
+## **Technologies used**
+Back-End:
+  1.NodeJS
+  2.Express
+  3.Google Firebase
+  4.Npm
+  
+Front-end:
+  1.Javascript(JQuery, JQuery UI)
+  2.SCSS
+  3.Pug/Jade
+  4.Firebase functions
+
+---
 ## **Development Map**
 This is the steps that I followed to create the project so far:
 1. Learn to write/read from the Google Firebase database.
