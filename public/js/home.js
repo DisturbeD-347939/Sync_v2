@@ -135,7 +135,7 @@ $(document).ready(function()
             playerVars:
             {
                 'autoplay': 0,
-                'controls': 1
+                'controls': 0
             },
             events: 
             {
@@ -156,10 +156,12 @@ $(document).ready(function()
         if(event.data == 1)
         {
             masterSynchronize(true);
+            $('#controls > #playPause').text("pause");
         }
         else
         {
             masterSynchronize(false);
+            $('#controls > #playPause').text("play_arrow");
         }
     }
 
@@ -170,12 +172,25 @@ $(document).ready(function()
 
     /****************************** VIDEO CONTROLS **********************************/
 
-    var playTimeHover = false;
-    var controlSliderHover = false;
-    var controlSliderInitialLeft = 0;
-    var boolControlSliderInitialLeft = false;
-    var isDraggingControlSlider = false;
-    var isClicked = false;
+    var playTimeHover = false,
+        controlSliderHover = false,
+        controlSliderInitialLeft = 0,
+        boolControlSliderInitialLeft = false,
+        isClicked = false;
+
+    $('#playPause').click(function()
+    {
+        if($('#playPause').text() == "pause")
+        {
+            player.pauseVideo();
+            db.ref('Rooms/' + joinedRoomID + "/Room/").update({playStatus: "2"});
+        }
+        else
+        {
+            player.playVideo();
+            db.ref('Rooms/' + joinedRoomID + "/Room/").update({playStatus: "1"});
+        }
+    })
 
     $('#controlSlider').draggable
     ({
@@ -193,54 +208,34 @@ $(document).ready(function()
     {
         if(isClicked)
         {
+            clearInterval(checkVideoTime);
+            $('#popupTimer').show();
+
             var sliderPercentage = (($('#controlSlider').position().left - controlSliderInitialLeft) * 100) / $('#playTime').width();
             var seekToThis = (sliderPercentage * player.getDuration()) / 100;
-            $('#popupTimer').text(Math.trunc(seekToThis/60) + ":" + Math.trunc(seekToThis%60));
+            var popupTimerSeconds = Math.trunc(seekToThis%60);
+
+            if(popupTimerSeconds < 10)
+            {
+                popupTimerSeconds = "0" + popupTimerSeconds;
+            }
+
+            $('#popupTimer').text(Math.trunc(seekToThis/60) + ":" + popupTimerSeconds);
+            $('.determinate').width(sliderPercentage + 0.5 + "%");
+            //console.log($('.determinate').width());
         }
     })
 
     $('#controlSlider').mouseup(function()
     {
+        $('#popupTimer').hide();
         isClicked = false;
         var sliderPercentage = (($('#controlSlider').position().left - controlSliderInitialLeft) * 100) / $('#playTime').width();
         var seekToThis = (sliderPercentage * player.getDuration()) / 100;
         player.seekTo(seekToThis);
-        //$('#controlSlider').css('left', $('#controlSlider').position().left + controlSliderInitialLeft);
+        startControls();
+        db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(seekToThis), timestamp: + new Date()}, );
     })
-
-    function startControls()
-    {
-        checkVideoTime = setInterval(function()
-        {
-            if(!boolControlSliderInitialLeft)
-            {
-                controlSliderInitialLeft = $('#controlSlider').position().left;
-                if(controlSliderInitialLeft != 0)
-                {
-                    boolControlSliderInitialLeft = true;
-                }
-            } 
-
-            var parseCurrentPlayTime = Math.trunc(player.getCurrentTime());
-            var parseCurrentPlayTimeSeconds = Math.trunc(parseCurrentPlayTime%60);
-
-            //Makes a number look like 2:03 instead of 2:3
-            if(parseCurrentPlayTimeSeconds < 10)
-            {
-                parseCurrentPlayTimeSeconds = "0" + parseCurrentPlayTimeSeconds;
-            }
-
-            //Update playtime values
-            $('#playTimeNumbers').text(Math.trunc(parseCurrentPlayTime/60) + ":" + parseCurrentPlayTimeSeconds + " / " + Math.trunc(player.getDuration()/60) + ":" + Math.trunc(player.getDuration()%60));
-
-            //Get percentage of video done to carry on to the slider
-            var videoPlayPercentage = ( Math.trunc(player.getCurrentTime()) * 100) / Math.trunc(player.getDuration());
-            $('.determinate').width(videoPlayPercentage + "%");
-
-            //Make the control for the slider follow the slider
-            $('#controlSlider').css('left', controlSliderInitialLeft + $('.determinate').width() - 2);
-        }, 1000)
-    }
 
     $('#playTime > .progress').hover(
     function()
@@ -279,6 +274,41 @@ $(document).ready(function()
             $('.progress').css('padding', '2px 0px');
         }
     }
+
+    function startControls()
+    {
+        checkVideoTime = setInterval(function()
+        {
+            if(!boolControlSliderInitialLeft)
+            {
+                controlSliderInitialLeft = $('#controlSlider').position().left;
+                if(controlSliderInitialLeft != 0)
+                {
+                    boolControlSliderInitialLeft = true;
+                }
+            } 
+
+            var parseCurrentPlayTime = Math.trunc(player.getCurrentTime());
+            var parseCurrentPlayTimeSeconds = Math.trunc(parseCurrentPlayTime%60);
+
+            //Makes a number look like 2:03 instead of 2:3
+            if(parseCurrentPlayTimeSeconds < 10)
+            {
+                parseCurrentPlayTimeSeconds = "0" + parseCurrentPlayTimeSeconds;
+            }
+
+            //Update playtime values
+            $('#playTimeNumbers').text(Math.trunc(parseCurrentPlayTime/60) + ":" + parseCurrentPlayTimeSeconds + " / " + Math.trunc(player.getDuration()/60) + ":" + Math.trunc(player.getDuration()%60));
+
+            //Get percentage of video done to carry on to the slider
+            var videoPlayPercentage = ( Math.trunc(player.getCurrentTime()) * 100) / Math.trunc(player.getDuration());
+            $('.determinate').width(videoPlayPercentage + "%");
+
+            //Make the control for the slider follow the slider
+            $('#controlSlider').css('left', controlSliderInitialLeft + $('.determinate').width() - 2);
+        }, 1000)
+    }
+
 
     /************************************ SIDEBAR ***********************************/
 
