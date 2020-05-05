@@ -15,17 +15,17 @@ To see some images check out this [link](https://imgur.com/a/uRXaZkj)
 
 ---
 ## **Technologies used**
+Front-End:
+1. Javascript(JQuery, JQuery UI)
+2. SCSS
+3. Pug/Jade
+4. Firebase Functions
+
 Back-End:
-  1.NodeJS
-  2.Express
-  3.Google Firebase
-  4.Npm
-  
-Front-end:
-  1.Javascript(JQuery, JQuery UI)
-  2.SCSS
-  3.Pug/Jade
-  4.Firebase functions
+1. NodeJS
+2. Express
+3. Google Firebase
+4. Npm
 
 ---
 ## **Development Map**
