@@ -27,10 +27,10 @@ $(document).ready(function()
 
     //Variables
     var stickyHeader = $("header").offset();
-    var sideNavWidth = $(window).width() * 0.2;
+    var sideNavWidth = 350;
 
     //Hiding elements
-    $('#formRegister').hide();
+    $('#formRegister, #loading').hide();
 
     //Positioning/Sizing - Content
     $('#content').css("padding-bottom", $("footer").height() + 50);
@@ -78,7 +78,7 @@ $(document).ready(function()
         //Positioning - Sidebar
         if(sidebarOpen)
         {
-            sideNavWidth = $(window).width() * 0.2;
+            //sideNavWidth = $(window).width() * 0.2;
 
             $('.sidebar').css
             ({
@@ -180,6 +180,7 @@ $(document).ready(function()
         e.preventDefault();
 
         $('#registerSubmit').addClass("disabled");
+        $('#loading').show();
 
         var valid = true;
         var inputs = $('#formRegisterInputs :input');
@@ -209,6 +210,7 @@ $(document).ready(function()
             function(data, status)
             {
                 $('#registerSubmit').removeClass("disabled");
+                $('#loading').hide();
 
                 if(data.code == "200")
                 {
@@ -239,6 +241,11 @@ $(document).ready(function()
                 }
             })
         }
+        else
+        {
+            $('#registerSubmit').removeClass("disabled");
+            $('#loading').hide();
+        }
     })
 
     $('#formLogin > form').submit(function(e)
@@ -246,6 +253,7 @@ $(document).ready(function()
         e.preventDefault();
 
         $('#loginSubmit').addClass("disabled");
+        $('#loading').show();
 
         var valid = true;
         var inputs = $('#formLoginInputs :input');
@@ -257,33 +265,42 @@ $(document).ready(function()
             if(!$(this).hasClass("valid")) { valid = false; }
         })
 
-        $.post('/login',
+        if(valid)
         {
-            data: values
-        },
-        function(data, status)
+            $.post('/login',
+            {
+                data: values
+            },
+            function(data, status)
+            {
+                $('#loginSubmit').removeClass("disabled");
+                $('#loading').hide();
+    
+                if(data.code == "200")
+                {
+                    setCookie("username", data.id, 1);
+                    analytics.logEvent('log_in');
+                    window.location.href = "/home";
+                }
+                if(data.code == "409")
+                {
+                    $('#formLoginInputs > div:first-child > span').attr("data-error", "Wrong email/password");
+                    $('#formLoginInputs > div > input').val("");
+                    $('#formLoginInputs > div > input').removeClass("valid");
+                    $('#formLoginInputs > div > input').addClass("invalid");
+                }
+                if(data.code == "500")
+                {
+                    alert("Sorry, we are having problems with our servers. Try again later");
+                    closeSidebar();
+                }
+            })
+        }
+        else
         {
             $('#loginSubmit').removeClass("disabled");
-
-            if(data.code == "200")
-            {
-                setCookie("username", data.id, 1);
-                analytics.logEvent('log_in');
-                window.location.href = "/home";
-            }
-            if(data.code == "409")
-            {
-                $('#formLoginInputs > div:first-child > span').attr("data-error", "Wrong email/password");
-                $('#formLoginInputs > div > input').val("");
-                $('#formLoginInputs > div > input').removeClass("valid");
-                $('#formLoginInputs > div > input').addClass("invalid");
-            }
-            if(data.code == "500")
-            {
-                alert("Sorry, we are having problems with our servers. Try again later");
-                closeSidebar();
-            }
-        })
+            $('#loading').hide();
+        }
     })
 
     /****************************** FUNCTIONS *********************************/
