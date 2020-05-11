@@ -228,6 +228,7 @@ body {
         justify-content: center;
         align-items: center;
         width: 25%;
+        min-width: 300px;
         height: 100%;
         border: 1px solid grey;
         border-top-left-radius: 5%;
