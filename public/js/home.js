@@ -69,7 +69,7 @@ $(document).ready(function()
 
     //Hiding
     $('#createRoomForm :nth-child(3)').hide();
-    $('#createRoom, #joinRoom, #room').hide();
+    $('#createRoom, #joinRoom, #room, #roomDetails').hide();
 
     /****************************** WINDOW *********************************/
 
@@ -347,7 +347,7 @@ $(document).ready(function()
 
     $(document).on('click','.roomTag',function()
     {
-        joinRoom($(this).attr('name'));
+        joinRoom($(this).attr('name'), $(this).children('div').children('p').text());
     })
 
     $('#joinRoomBtn').click(function()
@@ -499,6 +499,22 @@ $(document).ready(function()
         $('#joinRoomForm').submit();
     })
 
+    $(document).on('click','.copyID',function(e)
+    {
+        var $temp = $('<input>');
+        $('body').append($temp);
+        $temp.val(e.target.name).select();
+        document.execCommand("copy");
+        $temp.remove();
+
+        $(e.target).text("COPIED");
+
+        setTimeout(function()
+        {
+            $(e.target).text("Copy room ID");
+        }, 2000)
+    })
+
     //On change
     $('#privacyRoomSwitch > label :checkbox').change(function()
     {
@@ -555,11 +571,11 @@ $(document).ready(function()
                 var date = new Date();
                 if(data.code == "200")
                 {
-                    //db.ref('Rooms/' + data.res + "/Chat/1/").set({name: "Server", message: "Welcome"});
+                    //db.ref('Rooms/' + data.res + "/Chat/0/").set({name: "Server", message: "Welcome"});
                     db.ref('Rooms/' + data.res + "/Room/").set({videoID: "aQS7Py1Fx0s", videoTime: "0", timestamp: date.getTime(), userCount: "0"});
                     addRoom(values["roomName"], data.res);
                     closeSidebar();
-                    joinRoom(data.res);
+                    joinRoom(data.res, values["roomName"]);
                 }
                 else
                 {
@@ -573,7 +589,6 @@ $(document).ready(function()
     {
         e.preventDefault();
 
-        //console.log(("#joinRoomSubmit").prop('disabled', true));
         $("#joinRoomSubmit").attr('disabled','disabled');
 
         var roomJoinIDInput = $('#roomJoinIDInput').val();
@@ -633,7 +648,7 @@ $(document).ready(function()
         var viewersImg = "<i class='viewersImg material-icons small prefix disable-select'> visibility </i>";
         var viewersCount = "<p class='viewersCount' > 0 </p> "    
 
-        $('#myRooms').append("<div class='roomTag' name=" + id + " id=" + id + "><div>" + roomName + "<div>" + viewersCount + viewersImg + "</div></div></div><hr>");
+        $('#myRooms').append("<div class='roomTag' name=" + id + " id=" + id + "><div>" + roomName + "<div>" + viewersCount + viewersImg + "</div></div></div><a class='copyID' name='" + id + "'>Copy room ID</a><hr>");
 
         db.ref('Rooms/' + id + "/Room/Users").on('value', function(snapshot)
         {
@@ -644,13 +659,15 @@ $(document).ready(function()
         })
     }
 
-    function joinRoom(roomID)
+    function joinRoom(roomID, roomName)
     {
         sidebarToggle();
         startControls();
         checkStatus(roomID);
 
-        $('#myRooms > #' + roomID).css('background-color', "#35364a");
+        //Add info to sidebar
+        $('#roomDetails').show();
+        $('#roomName').text(roomName);
 
         if(joinedRoomID)
         {
@@ -675,6 +692,9 @@ $(document).ready(function()
             { 
                 var lowTimestampIndex = 0;
                 var lowTimestamp = data.val()[Object.keys(data.val())[lowTimestampIndex]]["joined"];
+                var roomUserList = Object.keys(data.val());
+
+                $('#userCount').append('<p> Number of users - ' + Object.keys(data.val()).length + '</p>');
                 
                 for(var i = 0; i < Object.keys(data.val()).length; i++)
                 {
@@ -696,13 +716,22 @@ $(document).ready(function()
                         syncMe = false;
                     }
                 })
-    
             })
 
             setTimeout(function()
             {
                 player.seekTo(videoTime);
                 firstPlay = true;
+
+                if(data.val()["playStatus"] == 1)
+                {
+                    player.playVideo();
+                }
+                else
+                {
+                    player.pauseVideo();
+                }
+                
             }, 1000);
 
             //Welcome message
@@ -710,6 +739,36 @@ $(document).ready(function()
 
             updateChat();
             checkForNewChats();
+        })
+
+        db.ref('Rooms/' + roomID + '/Room/Users/').on('value', function(data)
+        {
+            if(data.val())
+            {
+                var roomUserList = Object.keys(data.val());
+                if(roomUserList)
+                {
+                    for(var i = 0; i < Object.keys(data.val()).length; i++)
+                    {
+                        addChar(roomUserList[i], "#", roomUserList[i].length-4, function(data)
+                        {
+                            roomUserList[i] = data;
+                        })
+                        
+                        if(i+1 >= Object.keys(data.val()).length)
+                        {
+                            getPictures(roomUserList, function(picturesArray)
+                            {
+                                $('#roomUsernames').empty();
+                                for(var j = 0; j < Object.keys(picturesArray).length; j++)
+                                {
+                                    $('#roomUsernames').append('<div name="' + Object.keys(picturesArray)[j] + '"><p>' + Object.keys(picturesArray)[j].slice(0, -5) + '</p><img src="https://api.adorable.io/avatars/200/' + picturesArray[Object.keys(picturesArray)[j]] + '.png"</img></div>');
+                                }
+                            });
+                        }
+                    }
+                }
+            }
         })
 
         //Animations
@@ -753,6 +812,26 @@ $(document).ready(function()
             db.ref('Rooms/' + room + "/Room/Users/" + userID).remove();
         })
     }
+
+    function getPictures(userList, callback)
+    {
+        $.get('./userPicture',
+        {
+            users: userList
+        },
+        function(data, status)
+        {
+            if(data["code"] == "200")
+            {
+                callback(data["data"]);
+            }
+            else
+            {
+                callback();
+            }
+        })
+    }
+
 
     /************************************ SYNCHRONIZATION ***********************************/
 
