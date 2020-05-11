@@ -157,11 +157,18 @@ $(document).ready(function()
         {
             masterSynchronize(true);
             $('#controls > #playPause').text("pause");
+
+            db.ref('Rooms/' + joinedRoomID + "/Room/").update({playStatus: "1"});
         }
         else
         {
             masterSynchronize(false);
             $('#controls > #playPause').text("play_arrow");
+        }
+
+        if(event.data == 2)
+        {
+            db.ref('Rooms/' + joinedRoomID + "/Room/").update({playStatus: "2"});
         }
     }
 
@@ -234,7 +241,7 @@ $(document).ready(function()
         var seekToThis = (sliderPercentage * player.getDuration()) / 100;
         player.seekTo(seekToThis);
         startControls();
-        db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(seekToThis), timestamp: + new Date()}, );
+        db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(seekToThis), timestamp: + new Date(), playStatus: "3"});
     })
 
     $('#playTime > .progress').hover(
@@ -309,6 +316,27 @@ $(document).ready(function()
         }, 1000)
     }
 
+    function checkStatus(roomID)
+    {
+        db.ref('Rooms/' + roomID + "/Room/playStatus").on('value', function(snapshot)
+        {
+            if(snapshot.val() == 1)
+            {
+                player.playVideo();
+            }
+            else if(snapshot.val() == 2)
+            {
+                player.pauseVideo();
+            }
+            else if(snapshot.val() == 3)
+            {
+                db.ref('Rooms/' + roomID + "/Room/videoTime").once('value', function(snapshot)
+                {
+                    player.seekTo(snapshot.val());
+                })
+            }
+        })
+    }
 
     /************************************ SIDEBAR ***********************************/
 
@@ -618,6 +646,7 @@ $(document).ready(function()
     {
         sidebarToggle();
         startControls();
+        checkStatus(roomID);
 
         $('#myRooms > #' + roomID).css('background-color', "#35364a");
 
