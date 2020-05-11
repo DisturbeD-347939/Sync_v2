@@ -76,7 +76,6 @@ header
         #createRoomCard
         {
             width: 30%;
-
             margin-left: 20%;
 
             div
@@ -94,6 +93,11 @@ header
                 {
                     font-size: 20px;
                 }
+            }
+
+            #createRoomBtn
+            {
+                cursor: pointer;
             }
         }
     }
@@ -187,6 +191,16 @@ footer
         {
             @include display(flex,column, center, center);
             margin-block-end: 0;
+        }
+    }
+
+    #loading
+    {
+        margin-top: 50px;
+
+        .spinner-layer
+        {
+            border-color: black;
         }
     }
 }
