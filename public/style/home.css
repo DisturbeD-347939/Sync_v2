@@ -42,6 +42,43 @@ body {
       width: 90%; }
     #sidebar #createJoin div {
       background-color: #35364a; }
+  #sidebar #roomDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px; }
+    #sidebar #roomDetails #roomName {
+      margin: 0px;
+      font-size: 20px;
+      font-weight: bold; }
+    #sidebar #roomDetails #userCount {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%; }
+    #sidebar #roomDetails #roomUsernames {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 90%; }
+      #sidebar #roomDetails #roomUsernames div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 10px; }
+        #sidebar #roomDetails #roomUsernames div p {
+          margin: 0px; }
+        #sidebar #roomDetails #roomUsernames div img {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          border: 1px solid black; }
   #sidebar #myRooms {
     display: flex;
     flex-direction: column;
@@ -51,17 +88,25 @@ body {
     font-weight: bold;
     font-size: 20px; }
     #sidebar #myRooms .roomTag {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       width: 90%; }
       #sidebar #myRooms .roomTag div:first-child {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        align-items: center; }
+        align-items: center;
+        width: 100%; }
         #sidebar #myRooms .roomTag div:first-child div {
           display: flex;
           flex-direction: row;
           justify-content: center;
           align-items: center; }
+    #sidebar #myRooms a {
+      color: #f49030;
+      font-size: 14px; }
   #sidebar #logOut {
     position: absolute;
     background-color: #ef863d;

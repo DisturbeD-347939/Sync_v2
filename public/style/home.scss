@@ -80,6 +80,59 @@ body
         }
     }
 
+    #roomDetails
+    {
+        @include display(flex, column, center, center);
+
+        width: 100%;
+
+        margin-bottom: 20px;
+
+        #roomName
+        {
+            margin: 0px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #userCount
+        {
+            @include display(flex, row, space-between, center);
+
+            width: 90%;
+        }
+
+        #roomUsernames
+        {
+            @include display(flex, column, center, center);
+
+            width: 90%;
+
+            div
+            {
+                @include display(flex, row, space-between, center);
+
+                width: 100%;
+
+                margin-bottom: 10px;
+
+                p
+                {
+                    margin: 0px;
+                }
+
+                img
+                {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+
+                    border: 1px solid black;
+                }
+            }
+        }
+    }
+
     #myRooms
     {
         @include display(flex, column, center, center);
@@ -91,16 +144,27 @@ body
 
         .roomTag
         {
+            @include display(flex, column, center, center);
+
             width: 90%;
+
             div:first-child
             {
                 @include display(flex, row, space-between, center);
+
+                width: 100%;
 
                 div
                 {
                     @include display(flex, row, center, center);
                 }
             }
+        }
+
+        a
+        {
+            color: $pallete2;
+            font-size: 14px;
         }
     }
 
