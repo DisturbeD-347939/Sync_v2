@@ -66,6 +66,52 @@ app.get('/userProfile', (request, response) =>
         })
 })
 
+app.get('/userPicture', (request, response) =>
+{
+    var users = request.query.users;
+    var counter = 0;
+    var counterRequest = 0;
+    var usersPics = {};
+
+    db.collection('Users').get()
+    .then(snapshot =>
+        {
+            if(snapshot["_size"] > 0)
+            {
+                snapshot.forEach(doc =>
+                    {
+                        counter++;
+                        if(users.indexOf(doc.id) > -1)
+                        {
+                            var thisUser = doc.id;
+                            db.collection('Users').doc(doc.id).get()
+                            .then(doc =>
+                                {
+                                    usersPics[thisUser] = doc.data()["picture"];
+                                    counterRequest++;
+
+                                    if(counter >= snapshot["_size"] && counter == counterRequest)
+                                    {
+                                        response.send({code:"200", data:usersPics});
+                                    }
+                                })
+                        }
+                        else
+                        {
+                            counterRequest++;
+                        }
+                    })
+            }
+            else
+            {
+                response.send({code:"204"})
+            }
+        })
+    .catch(err =>
+        {
+            response.send({code:"500", err: err});
+        })
+})
 
 /******************************************* ROOMS ******************************************/
 
