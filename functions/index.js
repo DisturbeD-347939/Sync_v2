@@ -27,7 +27,7 @@ app.set('views', './views');
 //Use new engine
 app.set('view engine', 'pug');
 
-/******************************************* GET ******************************************/
+/******************************************* ROUTES ******************************************/
 
 //Homepage
 app.get('/', (request, response) =>
@@ -46,6 +46,8 @@ app.get('/home', (request, response) =>
     response.render('home');
 })
 
+/******************************************* PROFILES ******************************************/
+
 app.get('/userProfile', (request, response) =>
 {
     var data = request.query.id;
@@ -61,6 +63,56 @@ app.get('/userProfile', (request, response) =>
             {
                 response.send({code: "500", res: "Document not found"});
             }
+        })
+})
+
+
+/******************************************* ROOMS ******************************************/
+
+app.post('/createRoom', (request, response) =>
+{
+    var data = request.body.data;
+    var id = request.body.id;
+    var roomID;
+
+    db.collection('Rooms').get()
+    .then(snapshot =>
+        {
+            if(data["roomPassword"] != "")
+            {
+                bcrypt.genSalt(10, function(err, salt)
+                {
+                    bcrypt.hash(data["roomPassword"], salt, function(err, hash) 
+                    {
+                        data["roomPassword"] = hash;
+                        db.collection('Rooms').add(data).then(doc => 
+                        {
+                            roomID = doc.id;
+                            db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({test: "test"})
+                            .then(doc =>
+                                {
+                                    response.send({code:"200", res: roomID});
+                                })
+                        });
+                    });
+                });
+            }
+            else
+            {
+                db.collection('Rooms').add(data).then(doc => 
+                {
+                    roomID = doc.id;
+                    db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({role: "admin"})
+                    .then(doc =>
+                    {
+                        response.send({code:"200", res: roomID});
+                    })
+                });
+            }
+        })
+    .catch(err =>
+        {
+            response.send({code:"500", err: err});
         })
 })
 
@@ -177,7 +229,7 @@ app.get('/getRoomInfo', (request, response) =>
     })
 })
 
-/******************************************* POST ******************************************/
+/******************************************* AUTH & REGISTRATION ******************************************/
 
 app.post('/register', (request, response) =>
 {
@@ -397,66 +449,7 @@ app.post('/login', (request, response) =>
         });
 })
 
-app.post('/createRoom', (request, response) =>
-{
-    var data = request.body.data;
-    var id = request.body.id;
-    var roomID;
 
-    db.collection('Rooms').get()
-    .then(snapshot =>
-        {
-            if(data["roomPassword"] != "")
-            {
-                bcrypt.genSalt(10, function(err, salt)
-                {
-                    bcrypt.hash(data["roomPassword"], salt, function(err, hash) 
-                    {
-                        data["roomPassword"] = hash;
-                        db.collection('Rooms').add(data).then(doc => 
-                        {
-                            roomID = doc.id;
-                            db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({test: "test"})
-                            .then(doc =>
-                                {
-                                    response.send({code:"200", res: roomID});
-                                })
-                        });
-                    });
-                });
-            }
-            else
-            {
-                db.collection('Rooms').add(data).then(doc => 
-                {
-                    roomID = doc.id;
-                    db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({role: "admin"})
-                    .then(doc =>
-                    {
-                        response.send({code:"200", res: roomID});
-                    })
-                });
-            }
-        })
-    .catch(err =>
-        {
-            response.send({code:"500", err: err});
-        })
-})
-
-/***************************************** SOCKETS ***************************************/
-
-async function uploadFile(path)
-{
-    await storage.bucket("sync-7e5a0.appspot.com").upload(path, 
-    {
-        gzip: true,
-        metadata: 
-        {
-            cacheControl: 'public, max-age=31536000',
-        },
-    });
-}
 
 //Export app
 exports.app = functions.https.onRequest(app);
