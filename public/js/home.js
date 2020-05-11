@@ -408,6 +408,7 @@ $(document).ready(function()
 
     function closeSidebar()
     {
+        $('#sidebarToggle').text("menu");
         $('#sidebar').animate
         ({
             left: "-" + $('#sidebar').width(),
@@ -432,6 +433,7 @@ $(document).ready(function()
 
     function openSidebar()
     {
+        $('#sidebarToggle').text("menu_open");
         $('#sidebar').show();
         $('#sidebar').animate
         ({
