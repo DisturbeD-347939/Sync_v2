@@ -873,7 +873,6 @@ $(document).ready(function()
         {
             db.ref('Rooms/' + joinedRoomID + "/Chat/").once('value').then(function(data) 
             {
-                console.log(data.val());
                 if(data.val())
                 {
                     db.ref('Rooms/' + joinedRoomID + "/Chat/" + data.val().length + "/").set({name: id, message: $('#sendMessageInput').val()});
@@ -881,11 +880,18 @@ $(document).ready(function()
                 }
                 else
                 {
-                    console.log($('#sendMessageInput').val());
                     db.ref('Rooms/' + joinedRoomID + "/Chat/0/").set({name: id, message: $('#sendMessageInput').val()});
                     $('#sendMessageInput').val("");
                 }
             })
+        }
+    })
+
+    $('#sendMessage').keypress(function(e)
+    {
+        if(e.keyCode == 13)
+        {
+            $('#sendMessageBtn').click();
         }
     })
 
