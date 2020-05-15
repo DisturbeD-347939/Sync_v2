@@ -57,9 +57,11 @@ $(document).ready(function()
     var checkVideoTime;
     var previousWidth = 0;
     $('#controlSlider').css('top', $('#controlSlider').position().top - $('#controlSlider').height()/2 - 3);
+    $('#volumeRangeField > input').attr('value', "0")
 
     //Room controls - Hiding elements
     $('#controlSlider').css('opacity', '0');
+    $('#volumeRangeField').hide();
 
     //Animations
     var createRoomAnimation = false;
@@ -242,6 +244,47 @@ $(document).ready(function()
         player.seekTo(seekToThis);
         startControls();
         db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(seekToThis), timestamp: + new Date(), playStatus: "3"});
+    })
+
+    $('#volumeControl, #volumeRangeField').hover(
+    function()
+    {
+        $('#volumeRangeField').show();
+        $('#volumeRangeField').animate({width: '100px'}, 250);
+    },
+    function()
+    {   
+        setTimeout(checkIfOutsideVolumeControl, 1000);
+    })
+
+    function checkIfOutsideVolumeControl()
+    {
+        if($('#volumeControl:hover, #volumeRangeField:hover').length == 0)
+        {
+            $('#volumeRangeField').animate({width: '0px'}, 250, function()
+            {
+                $('#volumeRangeField').hide();
+            });
+        }
+
+        
+    }
+
+    $('#volumeRangeField > input').on('input', function()
+    {
+        player.setVolume($('#volumeRangeField > input').val());
+        if($('#volumeRangeField > input').val() == 0)
+        {
+            $('#volumeControl').text("volume_mute");
+        }
+        else if($('#volumeRangeField > input').val() < 50)
+        {
+            $('#volumeControl').text("volume_down");
+        }
+        else if($('#volumeRangeField > input').val() >= 50)
+        {
+            $('#volumeControl').text("volume_up");
+        }
     })
 
     $('#playTime > .progress').hover(

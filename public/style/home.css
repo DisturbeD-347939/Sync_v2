@@ -267,6 +267,12 @@ body {
             cursor: pointer;
             width: 50px;
             text-align: center; }
+          #content #room #playerChat #video #controls #volumeRangeField {
+            width: 0px;
+            margin: 0px;
+            margin-right: 15px; }
+            #content #room #playerChat #video #controls #volumeRangeField input[type=range]::-webkit-slider-thumb {
+              background-color: #f49030; }
       #content #room #playerChat #chat {
         display: flex;
         flex-direction: column;

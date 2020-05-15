@@ -409,9 +409,20 @@ body
                         width: 50px;
                         text-align: center;
                     }
+
+                    #volumeRangeField
+                    {
+                        width: 0px;
+                        margin: 0px;
+                        margin-right: 15px;
+
+                        input[type=range]::-webkit-slider-thumb 
+                        {
+                            background-color: $pallete2;
+                        }
+                    }
                 }
             }
-
             #chat
             {
                 @include display(flex, column, center, center);
