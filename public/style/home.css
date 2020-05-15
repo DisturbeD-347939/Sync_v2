@@ -104,9 +104,18 @@ body {
           flex-direction: row;
           justify-content: center;
           align-items: center; }
-    #sidebar #myRooms a {
-      color: #f49030;
-      font-size: 14px; }
+    #sidebar #myRooms .roomOptions {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 80%; }
+      #sidebar #myRooms .roomOptions .copyID {
+        color: #f49030;
+        font-size: 14px; }
+      #sidebar #myRooms .roomOptions #leaveRoom {
+        color: red;
+        font-size: 14px; }
   #sidebar #logOut {
     position: absolute;
     background-color: #ef863d;

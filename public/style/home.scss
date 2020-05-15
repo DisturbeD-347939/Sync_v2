@@ -161,10 +161,23 @@ body
             }
         }
 
-        a
+        .roomOptions
         {
-            color: $pallete2;
-            font-size: 14px;
+            @include display(flex, row, space-between, center);
+
+            width: 80%;
+
+            .copyID
+            {
+                color: $pallete2;
+                font-size: 14px;
+            }
+
+            #leaveRoom
+            {
+                color: red;
+                font-size: 14px;
+            }
         }
     }
 

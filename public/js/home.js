@@ -426,15 +426,15 @@ $(document).ready(function()
         }
     })
 
-    $('#leaveRoom').click(function()
-    {
-        leaveRoom();
-    })
-
     $('#logOut').click(function()
     {
         setCookie('username', "", -1);
         window.location.href = '/';
+    })
+
+    $(document).on('click','#leaveRoom',function()
+    {
+        leaveRoom($(this).attr('name'));
     })
 
     function sidebarToggle()
@@ -691,13 +691,17 @@ $(document).ready(function()
         var viewersImg = "<i class='viewersImg material-icons small prefix disable-select'> visibility </i>";
         var viewersCount = "<p class='viewersCount' > 0 </p> "    
 
-        $('#myRooms').append("<div class='roomTag' name=" + id + " id=" + id + "><div>" + roomName + "<div>" + viewersCount + viewersImg + "</div></div></div><a class='copyID' name='" + id + "'>Copy room ID</a><hr>");
+        $('#myRooms').append("<div class='roomTag' name=" + id + " id=" + id + "><div>" + roomName + "<div>" + viewersCount + viewersImg + "</div></div></div><div class='roomOptions'><a class='copyID' name='" + id + "'>Copy room ID</a></div><hr>");
 
         db.ref('Rooms/' + id + "/Room/Users").on('value', function(snapshot)
         {
             if(snapshot.val())
             {
                 $('#myRooms > #' + id + ' > div > div > p').text(Object.keys(snapshot.val()).length);
+            }
+            else
+            {
+                $('#myRooms > #' + id + ' > div > div > p').text("0");
             }
         })
     }
@@ -707,6 +711,8 @@ $(document).ready(function()
         sidebarToggle();
         startControls();
         checkStatus(roomID);
+
+        $('.roomTag[name=' + roomID + ']').next().append("<div id='leaveRoom' name=" + roomID + ">Leave room</div>");
 
         //Add info to sidebar
         $('#roomDetails').show();
@@ -848,6 +854,9 @@ $(document).ready(function()
 
     function leaveRoom(room)
     {
+        $('#room').hide();
+        $('#initialScreen').show();
+
         clearInterval(checkVideoTime);
 
         removeChar(id, "#", function(userID)
