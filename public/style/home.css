@@ -15,17 +15,15 @@ body {
   #sidebar #logoTag {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     height: 8%; }
-    #sidebar #logoTag img {
-      margin-left: 20px;
-      height: 80%;
-      width: 10%;
-      margin-right: 20px; }
+    #sidebar #logoTag img:first-child {
+      height: 60%;
+      margin-left: 20px; }
     #sidebar #logoTag #profilePicture {
-      width: 20%;
+      height: 60%;
       margin-right: 20px;
       border-radius: 50%;
       border: 1px solid black; }
@@ -217,17 +215,18 @@ body {
   #content #room {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    width: 90%;
-    height: 100%; }
+    height: 100%;
+    width: 90%; }
     #content #room #playerChat {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
+      margin-top: 100px;
       width: 100%;
-      height: 80%; }
+      height: 700px; }
       #content #room #playerChat #video {
         display: flex;
         flex-direction: column;
@@ -353,6 +352,44 @@ body {
           #content #room #playerChat #chat #sendMessage div {
             margin-right: 5px;
             margin-left: 5px; }
+    #content #room #searchBar {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      margin-top: 30px;
+      margin-bottom: 50px;
+      width: 100%; }
+      #content #room #searchBar #searchBarInput {
+        width: 50%; }
+    #content #room #resultsAds {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 100px; }
+      #content #room #resultsAds #searchResults {
+        display: grid;
+        grid-template-columns: repeat(3, 30%);
+        grid-gap: 20px;
+        width: 70%; }
+        #content #room #resultsAds #searchResults .thumbnail {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: center;
+          border: 1px solid grey; }
+          #content #room #resultsAds #searchResults .thumbnail div {
+            width: 100%; }
+            #content #room #resultsAds #searchResults .thumbnail div .thumbnailImage {
+              width: 100%; }
+          #content #room #resultsAds #searchResults .thumbnail:hover {
+            background-color: #E8E8E8; }
+            #content #room #resultsAds #searchResults .thumbnail:hover p a {
+              color: #ef863d; }
+      #content #room #resultsAds #ads {
+        width: 30%; }
 
 @media screen and (max-width: 1380px) {
   #usernameDisplay {

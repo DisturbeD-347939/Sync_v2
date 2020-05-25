@@ -33,22 +33,20 @@ body
 
     #logoTag
     {
-        @include display(flex, row, space-evenly, center);
+        @include display(flex, row, space-between, center);
 
         width: 100%;
         height: 8%;
 
-        img
+        img:first-child
         {
+            height: 60%;
             margin-left: 20px;
-            height: 80%;
-            width: 10%;
-            margin-right: 20px;
         }
 
         #profilePicture
         {
-            width: 20%;
+            height: 60%;
             margin-right: 20px;
 
             border-radius: 50%;
@@ -336,17 +334,18 @@ body
 
     #room
     {
-        @include display(flex, column, center, center);
-
-        width: 90%;
+        @include display(flex, column, flex-start, center);
+        
         height: 100%;
+        width: 90%;
 
         #playerChat
         {
             @include display(flex, row, center, center);
 
+            margin-top: 100px;
             width: 100%;
-            height: 80%;
+            height: 700px;
 
             #video
             {
@@ -547,6 +546,72 @@ body
                 }
             }
         }
+
+        #searchBar
+        {
+            @include display(flex, row, flex-start, center);
+
+            margin-top: 30px;
+            margin-bottom: 50px;
+            width: 100%;
+
+            #searchBarInput
+            {
+                width: 50%;
+            }
+        }
+
+        #resultsAds
+        {   
+            @include display(flex, row, flex-start, center);
+
+            width: 100%;
+            margin-bottom: 100px;
+
+            #searchResults
+            {
+                display: grid;
+                grid-template-columns: repeat(3, 30%);
+                grid-gap: 20px;
+                width: 70%;
+
+                .thumbnail
+                {
+                    @include display(flex, column, space-between, center);
+
+                    border: 1px solid grey;
+
+                    div
+                    {
+                        width: 100%;
+                        .thumbnailImage
+                        {
+                            width: 100%;
+                        }
+                    }
+
+                    &:hover
+                    {
+                        background-color: #E8E8E8;
+
+                        p a
+                        {
+                            color: $pallete1;
+                        }
+                    }
+                }
+
+                
+            }
+
+            #ads
+            {
+                width: 30%;
+
+            }
+        }
+
+        
     }
 }
 
