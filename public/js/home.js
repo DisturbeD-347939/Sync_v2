@@ -711,6 +711,7 @@ $(document).ready(function()
         sidebarToggle();
         startControls();
         checkStatus(roomID);
+        getRandomResults();
 
         $('.roomTag[name=' + roomID + ']').next().append("<div id='leaveRoom' name=" + roomID + ">Leave room</div>");
 
@@ -923,16 +924,17 @@ $(document).ready(function()
     {
         if($('#sendMessageInput').val())
         {
+            var message = $('#sendMessageInput').val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
             db.ref('Rooms/' + joinedRoomID + "/Chat/").once('value').then(function(data) 
             {
                 if(data.val())
                 {
-                    db.ref('Rooms/' + joinedRoomID + "/Chat/" + data.val().length + "/").set({name: id, message: $('#sendMessageInput').val()});
+                    db.ref('Rooms/' + joinedRoomID + "/Chat/" + data.val().length + "/").set({name: id, message: message});
                     $('#sendMessageInput').val("");
                 }
                 else
                 {
-                    db.ref('Rooms/' + joinedRoomID + "/Chat/0/").set({name: id, message: $('#sendMessageInput').val()});
+                    db.ref('Rooms/' + joinedRoomID + "/Chat/0/").set({name: id, message: message});
                     $('#sendMessageInput').val("");
                 }
             })
@@ -991,6 +993,95 @@ $(document).ready(function()
             }
         })
     }
+
+    /************************************ SEARCH ***********************************/
+
+    $('#searchBarInput').keypress(function(e)
+    {
+        if(e.keyCode == 13)
+        {
+            $('#searchBarInput').submit();
+        }
+    })
+    
+    $('#submitSearch').click(function() 
+    {
+        $('#searchBarInput').submit();
+    })
+
+    $('#searchBarInput').submit(function()
+    {
+        if($('#searchBarInput').val() != "")
+        {
+            if($('#searchBarInput').val().indexOf("youtube.com/watch?v=") >= 0)
+            {
+                var youtubeVideoID = "";
+                for(var i = $('#searchBarInput').val().indexOf("youtube.com/watch?v=") + 20; i < $('#searchBarInput').val().length; i++)
+                {
+                    youtubeVideoID += $('#searchBarInput').val()[i];
+
+                    if(i+1 >= $('#searchBarInput').val().length)
+                    {
+                        player.loadVideoById(youtubeVideoID);
+                    }
+                }
+            }
+            else
+            {
+                getRequest($('#searchBarInput').val());
+            }
+            
+            $([document.documentElement, document.body]).animate
+            ({
+                scrollTop: $("#searchBar").offset().top
+            }, 2000);
+        }
+    })
+
+    function getRequest(searchTerm) 
+    {
+        var url = 'https://www.googleapis.com/youtube/v3/search';
+        var params = 
+        {
+            part: 'snippet',
+            key: 'AIzaSyAyxRNY0pJ7ujfADgPZKYtVkvGOeaz02Gs',
+            maxResults: "3",
+            q: searchTerm
+        };
+      
+        $.getJSON(url, params, showResults);
+    }
+    
+    function showResults(results) 
+    {
+        var html = "";
+        var entries = results.items;
+        
+        $.each(entries, function (index, value) 
+        {
+            var title = value.snippet.title;
+            var thumbnail = value.snippet.thumbnails.medium.url;
+            var id = value.id.videoId;
+            html += "<div class='thumbnail'>";
+            html += "<div><div class='thumbnailImage' style='background: url(" + thumbnail + ") center no-repeat'></div>";
+            html += "<span class='card-title grey-text text-darken-4'>" + title + "</span></div><p><a>Play</a></p>";
+            html += "</div>";
+        }); 
+        
+        $('#searchResults').html(html);
+        $('.thumbnailImage').css('height', ($('.thumbnailImage').width() * 9)/16);
+    }
+
+    function getRandomResults()
+    {
+        fetch('https://random-word-api.herokuapp.com/word?number=1')
+        .then(res => res.json())
+        .then(json =>
+        {
+            getRequest(json);
+        })
+    }
+
 })
 
 /************************************ GENERAL FUNCTIONS ***********************************/
@@ -1032,3 +1123,4 @@ function setCookie(cname, cvalue, exdays)
     var expires = "expires="+ d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
+
