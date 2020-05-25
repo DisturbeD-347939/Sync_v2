@@ -8,6 +8,7 @@ if(!getCookie("username"))
 $(document).ready(function()
 {
     /***************************** SETUP *********************************/
+
     //Variables - Firebase : Database
     var firebaseConfig = 
     {
@@ -55,7 +56,6 @@ $(document).ready(function()
 
     //Room controls
     var checkVideoTime;
-    var previousWidth = 0;
     $('#controlSlider').css('top', $('#controlSlider').position().top - $('#controlSlider').height()/2 - 3);
     $('#volumeRangeField > input').attr('value', "0")
 
@@ -92,6 +92,7 @@ $(document).ready(function()
 
     window.onbeforeunload = function()
     {
+        //Leave the room when leaving the website
         leaveRoom(joinedRoomID);
         return null;
     }
@@ -355,7 +356,16 @@ $(document).ready(function()
             $('.determinate').width(videoPlayPercentage + "%");
 
             //Make the control for the slider follow the slider
-            $('#controlSlider').css('left', controlSliderInitialLeft + $('.determinate').width() - 2);
+            if(sidebar)
+            {
+                $('#controlSlider').css('left', 60 + $('.determinate').width() - 2 + 280);
+            }
+            else
+            {
+                $('#controlSlider').css('left', controlSliderInitialLeft + $('.determinate').width() - 2);
+            }
+
+            
         }, 1000)
     }
 
@@ -435,6 +445,7 @@ $(document).ready(function()
     $(document).on('click','#leaveRoom',function()
     {
         leaveRoom($(this).attr('name'));
+        $(this).remove();
     })
 
     function sidebarToggle()
@@ -715,14 +726,14 @@ $(document).ready(function()
 
         $('.roomTag[name=' + roomID + ']').next().append("<div id='leaveRoom' name=" + roomID + ">Leave room</div>");
 
-        //Add info to sidebar
-        $('#roomDetails').show();
-        $('#roomName').text(roomName);
-
         if(joinedRoomID)
         {
             leaveRoom(joinedRoomID);
         }
+
+        //Add info to sidebar
+        $('#roomDetails').show();
+        $('#roomName').text(roomName);
 
         joinedRoomID = roomID;
 
@@ -744,6 +755,7 @@ $(document).ready(function()
                 var lowTimestamp = data.val()[Object.keys(data.val())[lowTimestampIndex]]["joined"];
                 var roomUserList = Object.keys(data.val());
 
+                $('#userCount').empty();
                 $('#userCount').append('<p> Number of users - ' + Object.keys(data.val()).length + '</p>');
                 
                 for(var i = 0; i < Object.keys(data.val()).length; i++)
@@ -856,7 +868,9 @@ $(document).ready(function()
     function leaveRoom(room)
     {
         $('#room').hide();
+        $('#roomDetails').hide();
         $('#initialScreen').show();
+        $('#leaveRoom').remove();
 
         clearInterval(checkVideoTime);
 
@@ -1123,4 +1137,3 @@ function setCookie(cname, cvalue, exdays)
     var expires = "expires="+ d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
-
