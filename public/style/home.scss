@@ -25,7 +25,7 @@ body
     @include display(flex, column, flex-start, flex-start);
     position: fixed;
 
-    width: 15%;
+    width: 280px;
     height: 100%;
 
     border-right: 1px solid black;
@@ -563,7 +563,7 @@ body
 
         #resultsAds
         {   
-            @include display(flex, row, flex-start, center);
+            @include display(flex, row, center, flex-start);
 
             width: 100%;
             margin-bottom: 100px;
@@ -606,8 +606,13 @@ body
 
             #ads
             {
+                @include display(flex, column, center, center);
                 width: 30%;
 
+                img
+                {
+                    width: 100%;
+                }
             }
         }
 

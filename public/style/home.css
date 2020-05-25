@@ -8,7 +8,7 @@ body {
   justify-content: flex-start;
   align-items: flex-start;
   position: fixed;
-  width: 15%;
+  width: 280px;
   height: 100%;
   border-right: 1px solid black;
   background-color: #EDF0ED; }
@@ -365,8 +365,8 @@ body {
     #content #room #resultsAds {
       display: flex;
       flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
+      justify-content: center;
+      align-items: flex-start;
       width: 100%;
       margin-bottom: 100px; }
       #content #room #resultsAds #searchResults {
@@ -389,7 +389,13 @@ body {
             #content #room #resultsAds #searchResults .thumbnail:hover p a {
               color: #ef863d; }
       #content #room #resultsAds #ads {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         width: 30%; }
+        #content #room #resultsAds #ads img {
+          width: 100%; }
 
 @media screen and (max-width: 1380px) {
   #usernameDisplay {
