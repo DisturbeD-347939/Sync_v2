@@ -21,6 +21,7 @@ $(document).ready(function()
         appId: "1:799635030891:web:d7a9b39c19e178258b422e",
         measurementId: "G-58PCG0EDDL"
     };
+
     firebase.initializeApp(firebaseConfig);
     var db = firebase.database();
 
@@ -99,6 +100,7 @@ $(document).ready(function()
 
     /****************************** REQUESTS *********************************/
 
+    //Pull all rooms joined by this user
     $.get('/getRooms',
     {
         id: id
@@ -114,6 +116,7 @@ $(document).ready(function()
         }
     })
 
+    //Get users profile (only profile picture available atm)
     $.get('/userProfile',
     {
         id: id
@@ -122,12 +125,14 @@ $(document).ready(function()
     {
         if(data.code == "200")
         {
+            //Display the profile image provided by the adorable.io API
             $('#profilePicture').attr('src', 'https://api.adorable.io/avatars/200/' + data.res + '.png');
         }
     })
 
     /****************************** YOUTUBE PLAYER **********************************/
 
+    //On youtube player ready, define variables and run functions
     window.onYouTubePlayerAPIReady = function() 
     {
         player = new YT.Player('player', 
@@ -148,12 +153,14 @@ $(document).ready(function()
         });
     }
 
+    //Once the player is ready turn the volume to 0
     function onPlayerReady(e) 
     {
         e.target.setVolume(0);
         $('#volumeControl').text("volume_mute")
     }
 
+    //Check if the user is playing/pausing the video and update the database accordingly
     function onPlayerStateChange(event) 
     {
         if(event.data == 1)
@@ -175,6 +182,7 @@ $(document).ready(function()
         }
     }
 
+    //Not being used atm but it's a function to stop the video (stop != pause)
     function stopVideo() 
     {
         player.stopVideo();
@@ -188,6 +196,7 @@ $(document).ready(function()
         boolControlSliderInitialLeft = false,
         isClicked = false;
 
+    //On play/pause click, play or pause the video and update the database
     $('#playPause').click(function()
     {
         if($('#playPause').text() == "pause")
@@ -202,20 +211,24 @@ $(document).ready(function()
         }
     })
 
+    //Make video time slider draggable on the x axis
     $('#controlSlider').draggable
     ({
         axis: "x",
         containment: 'parent'
     });
 
+    //Detect when the user clicks on the video time slider
     $('#controlSlider').mousedown(function()
     {
         isDraggingControlSlider = false;
         isClicked = true;
     }) 
 
+    //Detect when the user is moving the mouse on the video time slider
     $('#controlSlider').mousemove(function()
     {
+        //If the user is also clicking on it then move the slider along with the mouse and show popup timer
         if(isClicked)
         {
             clearInterval(checkVideoTime);
@@ -232,21 +245,26 @@ $(document).ready(function()
 
             $('#popupTimer').text(Math.trunc(seekToThis/60) + ":" + popupTimerSeconds);
             $('.determinate').width(sliderPercentage + 0.5 + "%");
-            //console.log($('.determinate').width());
         }
     })
 
+    //When the user stops clicking on the slider, update the time of the video locally and send it to the server as well
     $('#controlSlider').mouseup(function()
     {
         $('#popupTimer').hide();
         isClicked = false;
+
         var sliderPercentage = (($('#controlSlider').position().left - controlSliderInitialLeft) * 100) / $('#playTime').width();
         var seekToThis = (sliderPercentage * player.getDuration()) / 100;
+
         player.seekTo(seekToThis);
+
         startControls();
+
         db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(seekToThis), timestamp: + new Date(), playStatus: "3"});
     })
 
+    //Animate the sound slider
     $('#volumeControl, #volumeRangeField').hover(
     function()
     {
@@ -258,6 +276,7 @@ $(document).ready(function()
         setTimeout(checkIfOutsideVolumeControl, 1000);
     })
 
+    //If outside the volume slider, close the slider again
     function checkIfOutsideVolumeControl()
     {
         if($('#volumeControl:hover, #volumeRangeField:hover').length == 0)
@@ -266,14 +285,14 @@ $(document).ready(function()
             {
                 $('#volumeRangeField').hide();
             });
-        }
-
-        
+        } 
     }
 
+    //Change volume of the video and update the icon accordingly 
     $('#volumeRangeField > input').on('input', function()
     {
         player.setVolume($('#volumeRangeField > input').val());
+
         if($('#volumeRangeField > input').val() == 0)
         {
             $('#volumeControl').text("volume_mute");
@@ -288,6 +307,7 @@ $(document).ready(function()
         }
     })
 
+    //Check if user is hovering the time slider
     $('#playTime > .progress').hover(
     function()
     {
@@ -300,6 +320,7 @@ $(document).ready(function()
         hoverCheck();
     })
 
+    //Check if user has his mouse over the control slider "circle"
     $('#controlSlider').hover(
     function()
     {
@@ -314,6 +335,7 @@ $(document).ready(function()
 
     function hoverCheck()
     {
+        //If the user has his mouse over either the time slider bar or the "circle" that controls the time then show the "circle" to control the time
         if(controlSliderHover || playTimeHover)
         {
             $('#controlSlider').css('opacity', '1');
@@ -326,19 +348,24 @@ $(document).ready(function()
         }
     }
 
+    //Start video controls
     function startControls()
     {
+        //Update UI every second
         checkVideoTime = setInterval(function()
         {
+            //Define the initial left of the control slider
             if(!boolControlSliderInitialLeft)
             {
                 controlSliderInitialLeft = $('#controlSlider').position().left;
+
                 if(controlSliderInitialLeft != 0)
                 {
                     boolControlSliderInitialLeft = true;
                 }
             } 
 
+            //Parse both the current playtime and the full duration playtime and adjust the numbers to look right on the UI
             var parseCurrentPlayTime = Math.trunc(player.getCurrentTime());
             var parseCurrentPlayTimeSeconds = Math.trunc(parseCurrentPlayTime%60);
 
@@ -377,18 +404,22 @@ $(document).ready(function()
         }, 1000)
     }
 
+    //Check for any database updates
     function checkStatus(roomID)
     {
         db.ref('Rooms/' + roomID + "/Room/playStatus").on('value', function(snapshot)
         {
+            //If it gets a 1 it means the video is currently playing in the room
             if(snapshot.val() == 1)
             {
                 player.playVideo();
             }
+            //A 2 means the video is paused in the room
             else if(snapshot.val() == 2)
             {
                 player.pauseVideo();
             }
+            //A 3 means someone changed the current play time of the video
             else if(snapshot.val() == 3)
             {
                 db.ref('Rooms/' + roomID + "/Room/videoTime").once('value', function(snapshot)
@@ -396,6 +427,7 @@ $(document).ready(function()
                     player.seekTo(snapshot.val());
                 })
             }
+            //A 4 means someone changed the video in the room
             else if(snapshot.val() == 4)
             {
                 db.ref('Rooms/' + roomID + "/Room/videoID").once('value', function(snapshot)
@@ -412,16 +444,98 @@ $(document).ready(function()
 
     /************************************ SIDEBAR ***********************************/
 
+    //On click toggle the sidebar on/off
     $('#sidebarToggle').click(function()
     {
         sidebarToggle();
     })
 
+    //On room click, join room
     $(document).on('click','.roomTag',function()
     {
         joinRoom($(this).attr('name'), $(this).children('div').children('p').text());
     })
 
+    //Delete cookie and send user to the main page
+    $('#logOut').click(function()
+    {
+        setCookie('username', "", -1);
+        window.location.href = '/';
+    })
+
+    //If the user clicks to leave the room, remove the user from this room
+    $(document).on('click','#leaveRoom',function()
+    {
+        leaveRoom($(this).attr('name'));
+        $(this).remove();
+    })
+
+    //Sidebar toggle function
+    function sidebarToggle()
+    {
+        if(sidebar)
+        {
+            closeSidebar();
+        }
+        else
+        {
+            openSidebar();
+        }
+    }
+
+    //Animate closing the sidebar
+    function closeSidebar()
+    {
+        $('#sidebarToggle').text("menu");
+        $('#sidebar').animate
+        ({
+            left: "-" + $('#sidebar').width(),
+        }, 600, function()
+        {
+            $('#sidebar').hide();
+        });
+
+        $('#content').animate
+        ({
+            width: "100%",
+            marginLeft: "0%"
+        }, 600);
+
+        $('#sidebarToggle').animate
+        ({
+            left: "0px"
+        }, 600)
+
+        sidebar = false;
+    }
+
+    //Animate opening the sidebar
+    function openSidebar()
+    {
+        $('#sidebarToggle').text("menu_open");
+        $('#sidebar').show();
+        $('#sidebar').animate
+        ({
+            left: 0
+        }, 600);
+
+        $('#content').animate
+        ({
+            width: "85%",
+            marginLeft: "14%"
+        }, 600);
+
+        $('#sidebarToggle').animate
+        ({
+            left: $('#sidebar').width()
+        }, 600)
+
+        sidebar = true;
+    }
+
+    /************************************ ROOMS ***********************************/
+
+    //On join room click, hide all screens and when hidden, display the join room screen
     $('#joinRoomBtn').click(function()
     {
         $('#createRoom').fadeOut("fast", function()
@@ -455,80 +569,7 @@ $(document).ready(function()
         }
     })
 
-    $('#logOut').click(function()
-    {
-        setCookie('username', "", -1);
-        window.location.href = '/';
-    })
-
-    $(document).on('click','#leaveRoom',function()
-    {
-        leaveRoom($(this).attr('name'));
-        $(this).remove();
-    })
-
-    function sidebarToggle()
-    {
-        if(sidebar)
-        {
-            closeSidebar();
-        }
-        else
-        {
-            openSidebar();
-        }
-    }
-
-    function closeSidebar()
-    {
-        $('#sidebarToggle').text("menu");
-        $('#sidebar').animate
-        ({
-            left: "-" + $('#sidebar').width(),
-        }, 600, function()
-        {
-            $('#sidebar').hide();
-        });
-
-        $('#content').animate
-        ({
-            width: "100%",
-            marginLeft: "0%"
-        }, 600);
-
-        $('#sidebarToggle').animate
-        ({
-            left: "0px"
-        }, 600)
-
-        sidebar = false;
-    }
-
-    function openSidebar()
-    {
-        $('#sidebarToggle').text("menu_open");
-        $('#sidebar').show();
-        $('#sidebar').animate
-        ({
-            left: 0
-        }, 600);
-
-        $('#content').animate
-        ({
-            width: "85%",
-            marginLeft: "14%"
-        }, 600);
-
-        $('#sidebarToggle').animate
-        ({
-            left: $('#sidebar').width()
-        }, 600)
-
-        sidebar = true;
-    }
-
-    /************************************ ROOMS ***********************************/
-
+    //On create room btn click, hide all "tabs" and display create room "tab"
     $('#createRoomBtn').click(function()
     {
         $('#joinRoom').fadeOut("fast", function()
@@ -562,21 +603,26 @@ $(document).ready(function()
         }
     })
 
+    //On create room submit, submit the form
     $('#createRoomSubmit').click(function()
     {
         $('#createRoomForm').submit();
     })
 
+    //On join room submit, submit the form
     $('#joinRoomSubmit').click(function()
     {
         $('#joinRoomForm').submit();
     })
 
+    //On copy id click, copy the id of the room to the user's clipboard
     $(document).on('click','.copyID',function(e)
     {
         var $temp = $('<input>');
         $('body').append($temp);
+
         $temp.val(e.target.name).select();
+
         document.execCommand("copy");
         $temp.remove();
 
@@ -588,13 +634,12 @@ $(document).ready(function()
         }, 2000)
     })
 
-    //On change
+    //If room as password enabled, show password field
     $('#privacyRoomSwitch > label :checkbox').change(function()
     {
         if(this.checked)
         {
             $('#createRoomForm :nth-child(3)').show();
-           //$('#createRoomForm :nth-child(2)').css("margin-bottom", "0px");
         }
         else
         {
@@ -602,20 +647,22 @@ $(document).ready(function()
             $('#createRoomForm :nth-child(3) > input').val("");
             $('#createRoomForm :nth-child(3) > input').removeClass("invalid");
             $('#createRoomForm :nth-child(3) > input').removeClass("valid");
-            //$('#createRoomForm :nth-child(2)').css("margin-bottom", "20px");
         }
     })
 
+    //On create room form submit
     $('#createRoomForm').submit(function(e)
     {
         e.preventDefault();
 
+        //Disable the button so that the user doesn't spam multiple new rooms
         $('createRoomSubmit').prop('disabled', true);
 
         var valid = true;
         var inputs = $('#createRoomForm :input');
         var values = {};
 
+        //Check if all the inputs are valid
         inputs.each(function()
         {
             if($(this).parent().css("display") != "none" && this.type != "checkbox")
@@ -630,10 +677,12 @@ $(document).ready(function()
             }
         })
 
+        //If they are valid then create the room
         if(valid)
         {
             values["owner"] = id;
 
+            //Send request to the server to create the room
             $.post('/createRoom',
             {
                 data: values,
@@ -644,7 +693,7 @@ $(document).ready(function()
                 var date = new Date();
                 if(data.code == "200")
                 {
-                    //db.ref('Rooms/' + data.res + "/Chat/0/").set({name: "Server", message: "Welcome"});
+                    //Create the room in the real time database, add the room to the sidebar and join the room
                     db.ref('Rooms/' + data.res + "/Room/").set({videoID: "aQS7Py1Fx0s", videoTime: "0", timestamp: date.getTime(), userCount: "0"});
                     addRoom(values["roomName"], data.res);
                     closeSidebar();
@@ -652,12 +701,14 @@ $(document).ready(function()
                 }
                 else
                 {
+                    alert("Sorry, we are having trouble right now");
                     $('createRoomSubmit').prop('disabled', false);
                 }
             })
         }
     })
 
+    //On join room form submit
     $('#joinRoomForm').submit(function(e)
     {
         e.preventDefault();
@@ -667,8 +718,10 @@ $(document).ready(function()
         var roomJoinIDInput = $('#roomJoinIDInput').val();
         var roomJoinPasswordInput = $('#roomJoinPasswordInput').val();
 
+        //Check if input is valid
         if(roomJoinIDInput != "")
         {
+            //Check if room exists
             $.get('./getRoomInfo',
             {
                 roomID: roomJoinIDInput,
@@ -677,32 +730,38 @@ $(document).ready(function()
             },
             function(data, status)
             {
+                //Room doesn't exist
                 if(data["code"] == "204")
                 {
                     $('#joinRoomForm > div:first-child > span').attr("data-error", "Room doesn't exist");
                     $('#joinRoomForm > div:first-child > input').removeClass("valid");
                     $('#joinRoomForm > div:first-child > input').addClass("invalid");
                     M.updateTextFields();
+
                     setTimeout(function()
                     {
                         $('#joinRoomForm > div:first-child > span').attr("data-error", "");
                         $('#joinRoomForm > div:first-child > input').removeClass("invalid");
                         M.updateTextFields();
+
                         $("#joinRoomSubmit").removeAttr('disabled');
                     }, 2500)
                     
                 }
+                //Wrong password
                 else if(data["code"] == "401")
                 {
                     $('#joinRoomForm > div:last-child > span').attr("data-error", "Wrong password");
                     $('#joinRoomForm > div:last-child > input').removeClass("valid");
                     $('#joinRoomForm > div:last-child > input').addClass("invalid");
                     M.updateTextFields();
+
                     setTimeout(function()
                     {
                         $('#joinRoomForm > div:last-child > span').attr("data-error", "");
                         $('#joinRoomForm > div:last-child > input').removeClass("invalid");
                         M.updateTextFields();
+
                         $("#joinRoomSubmit").removeAttr('disabled');
                     }, 2500)
                 }
@@ -720,14 +779,17 @@ $(document).ready(function()
         }
     })
 
+    //Add room to sidebar
     function addRoom(name, id)
     {
         var roomName = "<p class='roomName'>" + name + "</p>";
         var viewersImg = "<i class='viewersImg material-icons small prefix disable-select'> visibility </i>";
         var viewersCount = "<p class='viewersCount' > 0 </p> "    
 
+        //Create a div with the room details
         $('#myRooms').append("<div class='roomTag' name=" + id + " id=" + id + "><div>" + roomName + "<div>" + viewersCount + viewersImg + "</div></div></div><div class='roomOptions'><a class='copyID' name='" + id + "'>Copy room ID</a></div><hr>");
 
+        //Get amount of users in the room atm
         db.ref('Rooms/' + id + "/Room/Users").on('value', function(snapshot)
         {
             if(snapshot.val())
@@ -741,15 +803,25 @@ $(document).ready(function()
         })
     }
 
+    //Join room function
     function joinRoom(roomID, roomName)
     {
+        //Toggle sidebar off
         sidebarToggle();
+
+        //Start video controls
         startControls();
+
+        //Check if the room is playing/paused/etc
         checkStatus(roomID);
+
+        //Get random youtube search results
         getRandomResults();
 
+        //Create leave room button on the room
         $('.roomTag[name=' + roomID + ']').next().append("<div id='leaveRoom' name=" + roomID + ">Leave room</div>");
 
+        //If it's trying to join the same room, leave it first
         if(joinedRoomID)
         {
             leaveRoom(joinedRoomID);
@@ -761,8 +833,10 @@ $(document).ready(function()
 
         joinedRoomID = roomID;
 
+        //Get data from the room
         db.ref('Rooms/' + roomID + "/Room/").once('value').then(function(data) 
         {
+            //Remove hashtags because the real time database doesn't like those :)
             var userID = id.replace('#', "");
 
             removeChar(userID, "#", function(userID)
@@ -770,18 +844,21 @@ $(document).ready(function()
                 db.ref('Rooms/' + roomID + "/Room/Users/" + userID + "/").set({joined: + new Date()});
             })
 
+            //Get values from the database
             videoTime = data.val()["videoTime"];
             player.loadVideoById(data.val()["videoID"]);
 
+            //Grab users from the database
             db.ref('Rooms/' + roomID + "/Room/Users/").once('value').then(function(data)
             { 
                 var lowTimestampIndex = 0;
                 var lowTimestamp = data.val()[Object.keys(data.val())[lowTimestampIndex]]["joined"];
-                var roomUserList = Object.keys(data.val());
 
+                //Prepare the sidebar to intake all the users in the room
                 $('#userCount').empty();
                 $('#userCount').append('<p> Number of users - ' + Object.keys(data.val()).length + '</p>');
                 
+                //Check for the lowest timestamp
                 for(var i = 0; i < Object.keys(data.val()).length; i++)
                 {
                     if(lowTimestamp > data.val()[Object.keys(data.val())[i]]["joined"])
@@ -791,8 +868,10 @@ $(document).ready(function()
                     }
                 }
 
+                //Add the hashtag again
                 addChar(Object.keys(data.val())[lowTimestampIndex], "#", Object.keys(data.val())[lowTimestampIndex].length-4, function(data)
                 {
+                    //If this user is the oldest user in the room, people sync to him, else he syncs to someone else
                     if(data == id)
                     {
                         syncMe = true;
@@ -804,6 +883,7 @@ $(document).ready(function()
                 })
             })
 
+            //Wait a second to make sure everything else is done before running this function to seek to the video time
             setTimeout(function()
             {
                 player.seekTo(videoTime);
@@ -823,15 +903,21 @@ $(document).ready(function()
             //Welcome message
             $('#messages').append("<div class='server'><p class='nameTag'>" + "Server" + "</p><hr><p class='message'>" + "Welcome to " + $('#myRooms > #' + roomID + ' > div > p').html() + "</p></div>");
 
+            //Update the chat with all the texts
             updateChat();
+
+            //Continuous function that checks for new chats
             checkForNewChats();
         })
 
+        //Display all the users in the room on the sidebar (and keeps on updating everytime it changes)
         db.ref('Rooms/' + roomID + '/Room/Users/').on('value', function(data)
         {
             if(data.val())
             {
+                //Get users
                 var roomUserList = Object.keys(data.val());
+
                 if(roomUserList)
                 {
                     for(var i = 0; i < Object.keys(data.val()).length; i++)
@@ -843,9 +929,11 @@ $(document).ready(function()
                         
                         if(i+1 >= Object.keys(data.val()).length)
                         {
+                            //Get pictures of all the users in the room
                             getPictures(roomUserList, function(picturesArray)
                             {
                                 $('#roomUsernames').empty();
+                                //Append all the users to the list with their respective pictures
                                 for(var j = 0; j < Object.keys(picturesArray).length; j++)
                                 {
                                     $('#roomUsernames').append('<div name="' + Object.keys(picturesArray)[j] + '"><p>' + Object.keys(picturesArray)[j].slice(0, -5) + '</p><img src="https://api.adorable.io/avatars/200/' + picturesArray[Object.keys(picturesArray)[j]] + '.png"</img></div>');
@@ -857,7 +945,7 @@ $(document).ready(function()
             }
         })
 
-        //Animations
+        //Animations to fade everything out and display the current room
         $('#createRoom').fadeOut("fast", function()
         {
             createRoomAnimation = true;
@@ -889,6 +977,7 @@ $(document).ready(function()
         }
     }
 
+    //Function to leave the room
     function leaveRoom(room)
     {
         $('#room').hide();
@@ -904,8 +993,10 @@ $(document).ready(function()
         })
     }
 
+    //Grab all the pictures from the users in the room
     function getPictures(userList, callback)
     {
+        //Ask the server for the pictures
         $.get('./userPicture',
         {
             users: userList
@@ -926,10 +1017,12 @@ $(document).ready(function()
 
     /************************************ SYNCHRONIZATION ***********************************/
 
+    //Check for synchronization
     function masterSynchronize(bool)
     {
         if(bool)
         {
+            //If synching to this user then save his play time on the server
             if(syncMe)
             {
                 synchronize = setInterval(function()
@@ -937,6 +1030,7 @@ $(document).ready(function()
                     db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoTime: Math.trunc(player.getCurrentTime()), timestamp: + new Date()});
                 },2500)
             }
+            //Else get the play time only once at startup
             else 
             {
                 if(firstPlay)
@@ -958,11 +1052,16 @@ $(document).ready(function()
 
     /************************************ CHAT ***********************************/
 
+    //On sending a message
     $('#sendMessageBtn').click(function()
-    {
+    {  
+        //If it's not empty
         if($('#sendMessageInput').val())
         {
+            //Filter the message to prevent injections
             var message = $('#sendMessageInput').val().replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+            //Save message
             db.ref('Rooms/' + joinedRoomID + "/Chat/").once('value').then(function(data) 
             {
                 if(data.val())
@@ -979,6 +1078,7 @@ $(document).ready(function()
         }
     })
 
+    //On enter key, send message
     $('#sendMessage').keypress(function(e)
     {
         if(e.keyCode == 13)
@@ -987,6 +1087,7 @@ $(document).ready(function()
         }
     })
 
+    //Check for new messages on the real time database
     function checkForNewChats()
     {
         db.ref('Rooms/' + joinedRoomID + '/Chat/').on('value', function(data)
@@ -995,6 +1096,7 @@ $(document).ready(function()
         })
     }
 
+    //Get all the messages from the database and display them on the chat
     function updateChat()
     {
         $('#messages').empty();
@@ -1023,6 +1125,7 @@ $(document).ready(function()
                         }
                     }
 
+                    //Always make sure to scroll down
                     if(i+1 >= data.val().length)
                     {
                         $("#messages").scrollTop($("#messages")[0].scrollHeight);
@@ -1034,6 +1137,7 @@ $(document).ready(function()
 
     /************************************ SEARCH ***********************************/
 
+    //On enter key press, submit search
     $('#searchBarInput').keypress(function(e)
     {
         if(e.keyCode == 13)
@@ -1042,15 +1146,19 @@ $(document).ready(function()
         }
     })
     
+    //On submit search click, submit the input
     $('#submitSearch').click(function() 
     {
         $('#searchBarInput').submit();
     })
 
+    //On search bar input submit
     $('#searchBarInput').submit(function()
     {
+        //If the val is different from nothing
         if($('#searchBarInput').val() != "")
         {
+            //Check if its a youtube link
             if($('#searchBarInput').val().indexOf("youtube.com/watch?v=") >= 0)
             {
                 var youtubeVideoID = "";
@@ -1067,6 +1175,7 @@ $(document).ready(function()
             }
             else
             {
+                //Else search on youtube
                 getRequest($('#searchBarInput').val());
             }
             
@@ -1077,6 +1186,7 @@ $(document).ready(function()
         }
     })
 
+    //Use the youtube search API to retrieve results from the search
     function getRequest(searchTerm) 
     {
         var url = 'https://www.googleapis.com/youtube/v3/search';
@@ -1091,6 +1201,7 @@ $(document).ready(function()
         $.getJSON(url, params, showResults);
     }
     
+    //Parse and display the youtube search results
     function showResults(results) 
     {
         var html = "";
@@ -1111,6 +1222,7 @@ $(document).ready(function()
         $('.thumbnailImage').css('height', ($('.thumbnailImage').width() * 9)/16);
     }
 
+    //Use a random word API to do a random search when joining a new room
     function getRandomResults()
     {
         fetch('https://random-word-api.herokuapp.com/word?number=1')
@@ -1121,6 +1233,7 @@ $(document).ready(function()
         })
     }
 
+    //On video click, play it on the room
     $(document).on('click','.thumbnail',function(e)
     {
         player.loadVideoById($(e.target).attr('name'));
@@ -1131,16 +1244,19 @@ $(document).ready(function()
 
 /************************************ GENERAL FUNCTIONS ***********************************/
 
+//Function to remove a char
 function removeChar(id, char, callback)
 {
     callback(id.replace(char, ""))
 }
 
+//Function to add a char
 function addChar(id, char, index, callback)
 {
     callback(id.slice(0, index) + char + id.slice(index))
 }
 
+//Function to get a cookie from the browser
 function getCookie(cname) 
 {
     var name = cname + "=";
@@ -1161,6 +1277,7 @@ function getCookie(cname)
     return "";
 }
 
+//Function to set a cookie in the browser
 function setCookie(cname, cvalue, exdays) 
 {
     var d = new Date();
