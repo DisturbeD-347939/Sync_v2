@@ -9,7 +9,7 @@ self.addEventListener('install', function(event)
                 cache.addAll
                 (
                     [
-                        '/'
+                        //Cache stuff
                     ]
                 )
             })
