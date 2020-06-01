@@ -94,16 +94,19 @@ $(document).ready(function()
         }
     }
 
+    //Open sidebar
     $('#login, #createRoomBtn').click(function()
     {
         openSidebar();
     })
 
+    //Close sidebar
     $('#back').click(function()
     {
         closeSidebar();
     })
 
+    //Animate the transition
     $('#registerBtn').click(function()
     {
         $('#formLogin').fadeOut("fast");
@@ -113,6 +116,7 @@ $(document).ready(function()
         }, 300);
     })
 
+    //Animate the transition
     $('#backRegister').click(function()
     {
         $('#formRegister').fadeOut("fast");
@@ -122,6 +126,7 @@ $(document).ready(function()
         }, 300);
     })
 
+    //Show/hide passwords on user click
     $('#registerPasswordVisibility').click(function()
     {
         if(registerPasswordVisibility)
@@ -140,6 +145,7 @@ $(document).ready(function()
         }
     })
 
+    //Show/hide passwords on user click
     $('#registerConfirmPasswordVisibility').click(function()
     {
         if(registerConfirmPasswordVisibility)
@@ -158,16 +164,19 @@ $(document).ready(function()
         }
     })
 
+    //Submit form
     $('#registerSubmit').click(function()
     {
         $('#formRegister > form').submit(); 
     })
 
+    //Submit form
     $('#loginSubmit').click(function()
     {
         $('#formLogin > form').submit();
     })
 
+    //Define error message
     $('#emailInput').focus(function()
     {
         $('#formLoginInputs > div:first-child > span').attr("data-error", "Not a valid email address");
@@ -175,6 +184,7 @@ $(document).ready(function()
 
     /****************************** REQUESTS *********************************/
 
+    //Submit register
     $('#formRegister > form').submit(function(e)
     {
         e.preventDefault();
@@ -186,12 +196,14 @@ $(document).ready(function()
         var inputs = $('#formRegisterInputs :input');
         var values = {};
 
+        //Check if inputs are valid
         inputs.each(function()
         {
             values[this.name] = $(this).val();
             if(!$(this).hasClass("valid")) { valid = false; }
         })
 
+        //Check if passwords match
         if(values["password"] != values["confirmPassword"])
         {
             valid = false;
@@ -201,6 +213,7 @@ $(document).ready(function()
             M.updateTextFields();
         }
 
+        //If everything is valid, register user
         if(valid)
         {
             $.post('/register',
@@ -212,13 +225,14 @@ $(document).ready(function()
                 $('#registerSubmit').removeClass("disabled");
                 $('#loading').hide();
 
+                //Take user to login
                 if(data.code == "200")
                 {
                     $('#backRegister').click();
                 }
+                //Error feedback
                 if(data.code == "409")
                 {
-                    console.log(data.err);
                     if(data.err == "email")
                     {
                         $('#formRegisterInputs > div:nth-child(2) > span').attr("data-error", "Email taken!");
@@ -248,6 +262,7 @@ $(document).ready(function()
         }
     })
 
+    //Submit login
     $('#formLogin > form').submit(function(e)
     {
         e.preventDefault();
@@ -259,12 +274,14 @@ $(document).ready(function()
         var inputs = $('#formLoginInputs :input');
         var values = {};
 
+        //Check if inputs are valid
         inputs.each(function()
         {
             values[this.name] = $(this).val();
             if(!$(this).hasClass("valid")) { valid = false; }
         })
 
+        //Login user if inputs are valid
         if(valid)
         {
             $.post('/login',
@@ -276,12 +293,14 @@ $(document).ready(function()
                 $('#loginSubmit').removeClass("disabled");
                 $('#loading').hide();
     
+                //Login user and set cookie
                 if(data.code == "200")
                 {
                     setCookie("username", data.id, 1);
                     analytics.logEvent('log_in');
                     window.location.href = "/home";
                 }
+                //Error feedback
                 if(data.code == "409")
                 {
                     $('#formLoginInputs > div:first-child > span').attr("data-error", "Wrong email/password");
@@ -305,6 +324,7 @@ $(document).ready(function()
 
     /****************************** FUNCTIONS *********************************/
 
+    //Animate sidebar open
     function openSidebar()
     {
         if(!sidebarOpen)
@@ -340,6 +360,8 @@ $(document).ready(function()
         }
     }
 
+
+    //Animate sidebar close
     function closeSidebar()
     {
         sidebarOpen = false;
@@ -372,6 +394,7 @@ $(document).ready(function()
     }
 })
 
+//Get cookies
 function getCookie(cname) 
 {
     var name = cname + "=";
@@ -392,6 +415,7 @@ function getCookie(cname)
     return "";
 }
 
+//Set cookies
 function setCookie(cname, cvalue, exdays) 
 {
     var d = new Date();
