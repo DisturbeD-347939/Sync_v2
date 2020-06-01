@@ -396,6 +396,17 @@ $(document).ready(function()
                     player.seekTo(snapshot.val());
                 })
             }
+            else if(snapshot.val() == 4)
+            {
+                db.ref('Rooms/' + roomID + "/Room/videoID").once('value', function(snapshot)
+                {
+                    player.loadVideoById(snapshot.val());
+                    db.ref('Rooms/' + roomID + "/Room/videoTime").once('value', function(snapshot)
+                    {
+                        player.seekTo(snapshot.val());
+                    })
+                })
+            }
         })
     }
 
@@ -1045,6 +1056,7 @@ $(document).ready(function()
                     if(i+1 >= $('#searchBarInput').val().length)
                     {
                         player.loadVideoById(youtubeVideoID);
+                        db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoID: youtubeVideoID, videoTime: "0", playStatus: "4"});
                     }
                 }
             }
@@ -1084,9 +1096,9 @@ $(document).ready(function()
             var title = value.snippet.title;
             var thumbnail = value.snippet.thumbnails.medium.url;
             var id = value.id.videoId;
-            html += "<div class='thumbnail'>";
-            html += "<div><div class='thumbnailImage' style='background: url(" + thumbnail + ") center no-repeat'></div>";
-            html += "<span class='card-title grey-text text-darken-4'>" + title + "</span></div><p><a>Play</a></p>";
+            html += "<div class='thumbnail' name=" + id + ">";
+            html += "<div name=" + id + "><div class='thumbnailImage' name=" + id + " style='background: url(" + thumbnail + ") center no-repeat'></div>";
+            html += "<span class='card-title grey-text text-darken-4' name=" + id + ">" + title + "</span></div><p name=" + id + "><a name=" + id + ">Play</a></p>";
             html += "</div>";
         }); 
         
@@ -1103,6 +1115,12 @@ $(document).ready(function()
             getRequest(json);
         })
     }
+
+    $(document).on('click','.thumbnail',function(e)
+    {
+        player.loadVideoById($(e.target).attr('name'));
+        db.ref('Rooms/' + joinedRoomID + "/Room/").update({videoID: $(e.target).attr('name'), videoTime: "0", playStatus: "4"});
+    })
 
 })
 
