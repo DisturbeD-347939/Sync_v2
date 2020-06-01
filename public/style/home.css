@@ -378,8 +378,7 @@ body {
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          align-items: center;
-          border: 1px solid grey; }
+          align-items: center; }
           #content #room #resultsAds #searchResults .thumbnail div {
             width: 100%; }
             #content #room #resultsAds #searchResults .thumbnail div .thumbnailImage {
