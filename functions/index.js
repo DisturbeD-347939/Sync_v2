@@ -1,16 +1,11 @@
 const functions         = require('firebase-functions');
 const admin             = require('firebase-admin');
-const {Storage}         = require('@google-cloud/storage');
 const express           = require('express');
 const app               = express();
 const engines           = require('consolidate');
 const bcrypt            = require('bcryptjs');
 const fetch             = require('node-fetch');
 const serviceAccount    = require('./ServiceAccountKey.json');
-const projectId         = 'sync-7e5a0.appspot.com'
-const keyFilename       = './ServiceAccountKey.json'
-const storage           = new Storage({projectId, keyFilename});
-
 
 admin.initializeApp
 ({
@@ -18,7 +13,6 @@ admin.initializeApp
 });
 
 const db = admin.firestore();
-
 
 //Set engine as pug
 app.engine('pug', engines.pug);
@@ -38,6 +32,7 @@ app.get('/', (request, response) =>
     response.render('homepage');
 })
 
+//Main page
 app.get('/home', (request, response) =>
 {
     //Cache request for faster access
@@ -48,6 +43,7 @@ app.get('/home', (request, response) =>
 
 /******************************************* PROFILES ******************************************/
 
+//Retrieve user profile information
 app.get('/userProfile', (request, response) =>
 {
     var data = request.query.id;
@@ -66,6 +62,7 @@ app.get('/userProfile', (request, response) =>
         })
 })
 
+//Retrieve user profile picture
 app.get('/userPicture', (request, response) =>
 {
     var users = request.query.users;
@@ -73,6 +70,7 @@ app.get('/userPicture', (request, response) =>
     var counterRequest = 0;
     var usersPics = {};
 
+    //Cycle through all the users and get their pictures on an object with their name as the key
     db.collection('Users').get()
     .then(snapshot =>
         {
@@ -115,6 +113,7 @@ app.get('/userPicture', (request, response) =>
 
 /******************************************* ROOMS ******************************************/
 
+//Create room request
 app.post('/createRoom', (request, response) =>
 {
     var data = request.body.data;
@@ -124,8 +123,10 @@ app.post('/createRoom', (request, response) =>
     db.collection('Rooms').get()
     .then(snapshot =>
         {
+            //If there is a password in the room hash it and then save the room
             if(data["roomPassword"] != "")
             {
+                //Hash room password
                 bcrypt.genSalt(10, function(err, salt)
                 {
                     bcrypt.hash(data["roomPassword"], salt, function(err, hash) 
@@ -134,6 +135,7 @@ app.post('/createRoom', (request, response) =>
                         db.collection('Rooms').add(data).then(doc => 
                         {
                             roomID = doc.id;
+                            //Create room
                             db.collection('Rooms').doc(doc.id).collection("Users").doc(id).set({test: "test"})
                             .then(doc =>
                                 {
@@ -143,6 +145,7 @@ app.post('/createRoom', (request, response) =>
                     });
                 });
             }
+            //If there is no password, simply save the room
             else
             {
                 db.collection('Rooms').add(data).then(doc => 
@@ -162,6 +165,7 @@ app.post('/createRoom', (request, response) =>
         })
 })
 
+//Get rooms that a user has joined
 app.get('/getRooms', (request, response) =>
 {
     var data = request.query.id;
@@ -171,6 +175,7 @@ app.get('/getRooms', (request, response) =>
     var roomsJoined = 0;
     var roomIDs = [];
 
+    //Loop through all the rooms in the database and look for this user's name in it, if found, push rooms into array
     db.collection('Rooms').get()
     .then(snapshot =>
     {
@@ -227,6 +232,7 @@ app.get('/getRooms', (request, response) =>
     });
 })
 
+//When joining a room check if all the credentials are correct, ID and password (if it exists)
 app.get('/getRoomInfo', (request, response) =>
 {
     var id = request.query.roomID;
@@ -253,6 +259,7 @@ app.get('/getRoomInfo', (request, response) =>
                         }
                         else
                         {
+                            //Wrong password
                             response.send({code: "401"})
                         }
                     })
@@ -264,12 +271,14 @@ app.get('/getRoomInfo', (request, response) =>
 
                 if(counter >= snapshot["_size"])
                 {
+                    //Room not found
                     response.send({code: "204"})
                 }
             })
         }
         else
         {
+            //Room not found
             response.send({code: "204"});
         }
     })
@@ -277,6 +286,7 @@ app.get('/getRoomInfo', (request, response) =>
 
 /******************************************* AUTH & REGISTRATION ******************************************/
 
+//Register a new user manually
 app.post('/register', (request, response) =>
 {
     var data = request.body.data;
@@ -289,6 +299,7 @@ app.post('/register', (request, response) =>
     db.collection('Users').get()
     .then(snapshot =>
     {
+        //If there are users in the database already
         if(snapshot["_size"] != 0)
         {
             snapshot.forEach(doc =>
@@ -319,10 +330,12 @@ app.post('/register', (request, response) =>
                         }
                         if(i+1 >= IDList.length)
                         {
+                            //Check if email is different
                             bcrypt.compare(data.email, doc.data()["email"], function(err, res) 
                             {
                                 if(!res)
                                 {
+                                    //If so, hash both the emal and the password
                                     bcrypt.genSalt(10, function(err, salt)
                                     {
                                         bcrypt.hash(data["email"], salt, function(err, hash) 
@@ -332,6 +345,7 @@ app.post('/register', (request, response) =>
                                             {
                                                 bcrypt.hash(data["password"], salt, function(err, hash) 
                                                 {
+                                                    //Add the 0's to the ID
                                                     var nLength = ID.toString().length;
                                                     switch(nLength)
                                                     {
@@ -347,10 +361,12 @@ app.post('/register', (request, response) =>
                                                         default:
                                                             uniqueID = data.username + "#" + ID;
                                                     }
+                                                    //Get random words from API for the profile picture API
                                                     fetch('https://random-word-api.herokuapp.com/word?number=2')
                                                     .then(res => res.json())
                                                     .then(json =>
                                                     {
+                                                        //Save the new user
                                                         var fields =
                                                         {
                                                             username: data.username,
@@ -381,6 +397,7 @@ app.post('/register', (request, response) =>
         }
         else
         {
+            //Does the same thing has the function above but without checking on the database (since it's the first user)
             bcrypt.genSalt(10, function(err, salt)
             {
                 bcrypt.hash(data["email"], salt, function(err, hash) 
@@ -451,14 +468,17 @@ app.post('/login', (request, response) =>
             {
                 snapshot.forEach(doc =>
                     {
+                        //Compare if the email is the same
                         bcrypt.compare(data.email, doc.data()["email"], function(err, res) 
                         {
                             if(res)
                             {
+                                //Compare if the password is the same too
                                 bcrypt.compare(data.password, doc.data()["password"], function(err, res) 
                                 {
                                     if(res)
                                     {
+                                        //If so log in
                                         response.send({code: "200", id: doc.id});
                                     }
                                     else
@@ -494,8 +514,6 @@ app.post('/login', (request, response) =>
             response.send({code: "500", err: err});
         });
 })
-
-
 
 //Export app
 exports.app = functions.https.onRequest(app);
