@@ -313,6 +313,8 @@ body {
               border-radius: 25px;
               color: white;
               background-color: #35364a; }
+          #content #room #playerChat #chat #messages div[name] {
+            margin: 1px 0px; }
           #content #room #playerChat #chat #messages .mine {
             display: flex;
             flex-direction: column;

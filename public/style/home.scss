@@ -483,6 +483,11 @@ body
                         }
                     }
 
+                    div[name]
+                    {
+                        margin: 1px 0px;
+                    }
+
                     .mine
                     {
                         @include display(flex, column, center, flex-end);
