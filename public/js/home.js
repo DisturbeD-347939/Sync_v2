@@ -348,8 +348,16 @@ $(document).ready(function()
                 parseCurrentPlayTimeSeconds = "0" + parseCurrentPlayTimeSeconds;
             }
 
+            var totalPlayTime = Math.trunc(player.getDuration());
+            var totalPlayTimeSeconds = Math.trunc(player.getDuration()%60);
+
+            if(totalPlayTimeSeconds < 10)
+            {
+                totalPlayTimeSeconds = "0" + totalPlayTimeSeconds;
+            }
+
             //Update playtime values
-            $('#playTimeNumbers').text(Math.trunc(parseCurrentPlayTime/60) + ":" + parseCurrentPlayTimeSeconds + " / " + Math.trunc(player.getDuration()/60) + ":" + Math.trunc(player.getDuration()%60));
+            $('#playTimeNumbers').text(Math.trunc(parseCurrentPlayTime/60) + ":" + parseCurrentPlayTimeSeconds + " / " + Math.trunc(totalPlayTime/60) + ":" + totalPlayTimeSeconds);
 
             //Get percentage of video done to carry on to the slider
             var videoPlayPercentage = ( Math.trunc(player.getCurrentTime()) * 100) / Math.trunc(player.getDuration());
