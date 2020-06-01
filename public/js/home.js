@@ -705,7 +705,12 @@ $(document).ready(function()
                         M.updateTextFields();
                         $("#joinRoomSubmit").removeAttr('disabled');
                     }, 2500)
-                    
+                }
+                //Joined the room, refresh page to show new room
+                else if(data["code"] == "200")
+                {
+                    addRoom(data["roomName"], roomJoinIDInput);
+                    joinRoom(roomJoinIDInput, data["roomName"]);
                 }
             })
         }
